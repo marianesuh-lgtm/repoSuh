@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: demo1
+  main:
+    allow-bean-definition-overriding: true      
+  # 여기 아래 'ai'의 들여쓰기를 'main'과 같은 라인으로 맞추세요!
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: qwen-story  # 이제 이 설정이 정상적으로 적용됩니다.
+
+comfyui:
+  base-url: http://127.0.0.1:8188
+
+server: # 'server'도 최상위 계층이므로 한 칸 앞으로 당기는 것이 관례입니다.
+  port: 8080
+  shutdown: graceful
