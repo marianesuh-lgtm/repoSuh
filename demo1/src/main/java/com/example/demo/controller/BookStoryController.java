@@ -47,6 +47,8 @@ public class BookStoryController {
 	private final RestTemplate restTemplate = new RestTemplate();
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final ChatClient chatClient ;
+	
+	
 
 	public BookStoryController(ChatClient.Builder builder ) {
         this.chatClient = builder.build();
