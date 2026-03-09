@@ -16,9 +16,14 @@ import org.springframework.util.StopWatch;
 import com.example.demo.dto.BookRequest;
 import com.example.demo.dto.BookResponse;
 import com.example.demo.dto.BookResponse.PageItem;
+import com.example.demo.dto.GenerateBookRequest;
+import com.example.demo.dto.PagedStoryResponse;
+import com.example.demo.service.OllamaService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URLEncoder;
@@ -39,6 +44,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
+//@RequiredArgsConstructor
 @CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173"})
 @Slf4j
 public class BookStoryController {
@@ -47,12 +53,14 @@ public class BookStoryController {
 	private final RestTemplate restTemplate = new RestTemplate();
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final ChatClient chatClient ;
-	
-	
+	private final OllamaService ollamaService;  // ← 여기서도 선언 가능 (필요 시)	
+	//private final ChatClient actualChatClient;
 
-	public BookStoryController(ChatClient.Builder builder ) {
+	public BookStoryController(ChatClient.Builder builder, OllamaService ollamaService) {
         this.chatClient = builder.build();
-    }
+        this.ollamaService = ollamaService;
+   }
+	
 	
 	@PostMapping("/generate-book222")
 	public ResponseEntity<BookResponse> generateBook222(@RequestBody BookRequest request) {
@@ -194,58 +202,27 @@ public class BookStoryController {
 	}	
 
 	@PostMapping("/generate-book")
-	public ResponseEntity<BookResponse> generateBook(@RequestBody BookRequest request) {
-	    // 1. Ollama로 스토리 생성 (기존 로직)
-	    String story = generateStoryWithOllama(request);  // 이전에 만든 메서드
+	public ResponseEntity<?> generateBook(@RequestBody GenerateBookRequest request) {
+	    log.info("동화 생성 요청 수신: {}", request);
 
-	    // 스토리를 페이지별로 파싱 (예: "페이지1: 텍스트 [프롬프트]" 형식 가정)
-	    List<BookResponse.PageItem> imagePrompts = this.parseImagePromptsFromStory(story);  // 당신이 구현
-
-	    List<String> imageUrls = new ArrayList<>();
-
-	    // 2. 각 프롬프트로 ComfyUI API 호출
-	    try {
-	        String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/flux_schnell_0306.json")));
-
-            log.info("workflow::: {}", workflowJson);
-            ObjectMapper mapper = new ObjectMapper();
-            //Map<String, Object> workflow = mapper.readValue(modifiedJson, Map.class);
-            // 1. ComfyUI 규격에 맞게 "prompt" 키로 감싸기
-            //ObjectMapper mapper = new ObjectMapper();
-           // Map<String, Object> workflow = mapper.readValue(modifiedJson, Map.class);
-           // Map<String, Object> finalPayload = new HashMap<>();
-           // finalPayload.put("prompt", workflowJson); // 여기서 workflow는 가공된 노드 Map
-            
-            //String finalJson = mapper.writeValueAsString(finalPayload);
-             ExecutorService executor = Executors.newFixedThreadPool(3);
-            
-             List<CompletableFuture<Void>> futures = imagePrompts.stream()
-            		    .map(item -> CompletableFuture.runAsync(() -> {
-            		        try {
-            		            // 위에서 만든 메서드 호출
-            		            String url = generateAndPollImage(item.getPromptUsed());
-            		            item.setImageUrl(url); // 객체에 결과 저장
-            		        } catch (Exception e) {
-            		            log.error("페이지 생성 중 에러: {}", e.getMessage());
-            		        }
-            		    }, executor))
-            		    .collect(Collectors.toList());
-
-            		// 모든 작업이 끝날 때까지 대기
-            		CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-            		executor.shutdown();
-            		
-	    } catch (Exception e) {
-	    	return ResponseEntity.status(500).body(
-	    	        BookResponse.error("Error generating images: " + e.getMessage())
-	    	    );
+	    // 유효성 검사 (옵션)
+	    if (request.getSelections() == null) {
+	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
 	    }
 
-	    // 3. 스토리 + 이미지 URL 반환 (Vue에서 표시)
-	    return ResponseEntity.ok(
-	    		BookResponse.success2(story, imagePrompts)
-	    		);
-	}	
+	    // 여기서 LLM 호출 로직 실행
+	    try {
+            PagedStoryResponse result = ollamaService.generatePagedStory(request);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("동화 생성 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(PagedStoryResponse.builder()
+                            .title("오류 발생")
+                            .pages(List.of())
+                            .build());
+        }
+	}
 	
 	private String generateAndPollImage(String promptUsed) throws Exception {
 	    // 1. 워크플로우 JSON 로드 및 프롬프트 치환
