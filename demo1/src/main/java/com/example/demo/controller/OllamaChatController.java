@@ -20,7 +20,7 @@ public class OllamaChatController {
     /**
      * 사용자 질문을 받아 Ollama(localhost:11434)에 전달하고 답변을 반환합니다.
      * POST /api/chat/ask
-     * Body: { "question": "질문 내용", "model": "qwen-story" }  (model은 선택)
+     * Body: { "question": "질문 내용", "model": "my-eeve" }  (model은 선택)
      */
     @PostMapping(value = "/ask", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ChatAnswerResponse ask(@RequestBody ChatQuestionRequest request) {

@@ -9,11 +9,29 @@ spring:
       base-url: http://localhost:11434
       chat:
         options:
-          model: qwen-story  # 이제 이 설정이 정상적으로 적용됩니다.
+          model: my-eeve  # 이제 이 설정이 정상적으로 적용됩니다.
 
 comfyui:
   base-url: http://127.0.0.1:8188
 
+  # H2 데이터베이스 콘솔 설정 (웹에서 DB 확인용)
+  h2:
+      console:
+        enabled: true
+        path: /h2-console
+  datasource:
+      # AUTO_SERVER=TRUE가 핵심입니다.
+      url: jdbc:h2:file:~/testdb;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
+      driver-class-name: org.h2.Driver
+      initialization: true
+      username: sa
+      password:
+  jpa:
+      database-platform: org.hibernate.dialect.H2Dialect
+      defer-datasource-initialization: true  # 이 줄을 추가하세요!
+      hibernate:
+        ddl-auto: update
+      show-sql: true
 server: # 'server'도 최상위 계층이므로 한 칸 앞으로 당기는 것이 관례입니다.
   port: 8080
   shutdown: graceful

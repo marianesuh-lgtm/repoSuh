@@ -30,7 +30,7 @@ public class ComfyUiClient {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${comfyui.workflow-resource:workflow_api.json}")
+    @Value("${comfyui.workflow-resource:WF0310.json}")
     private String workflowResource;
 
     @Value("${comfyui.poll.max-seconds:120}")
@@ -56,7 +56,7 @@ public class ComfyUiClient {
     }
 
     /**
-     * ComfyUI 워크플로우 템플릿(`src/main/resources/workflow_api.json`)에
+     * ComfyUI 워크플로우 템플릿(`src/main/resources/WF0310.json`)에
      * positive/negative 등을 주입해 이미지 생성 요청을 수행합니다.
      *
      * overrides 키 예시: seed, steps, cfg, width, height, batchSize, ckptName, samplerName, scheduler, denoise

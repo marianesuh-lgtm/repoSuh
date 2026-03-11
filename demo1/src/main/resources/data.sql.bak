@@ -1,0 +1,7 @@
+-- 캐릭터 초기 데이터 (H2/MySQL 공통)
+-- 캐릭터 ID, 외모 묘사, 화풍, 네거티브 프롬프트 순서
+INSERT INTO character_prompt (char_id, appearance, art_style, negative) 
+VALUES ('HERO_ALICE', 'blonde hair, blue dress, signature ribbon', 'watercolor storybook style, soft lighting', 'animal ears, fox ears, extra fingers');
+
+INSERT INTO character_prompt (char_id, appearance, art_style, negative) 
+VALUES ('FIXER_KIM', 'middle-aged man, gray jumpsuit, holding a wrench', 'cinematic thriller lighting, detailed textures', 'cartoonish, bright colors');

@@ -94,7 +94,7 @@ public class BookController {
         }        
         // 1. 저장한 API JSON 파일 로드
         String workflowJsonStr = new String(Files.readAllBytes(
-            Paths.get("src/main/resources/workflows/testWF22.json")
+            Paths.get("src/main/resources/workflows/WF0310.json")
         ));
 
         // 2. 프롬프트 동적 치환 (간단 replace 예시)

@@ -18,6 +18,7 @@ import com.example.demo.dto.BookResponse;
 import com.example.demo.dto.BookResponse.PageItem;
 import com.example.demo.dto.GenerateBookRequest;
 import com.example.demo.dto.PagedStoryResponse;
+import com.example.demo.dto.PagedStoryResponse.Page;
 import com.example.demo.service.OllamaService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,7 +75,7 @@ public class BookStoryController {
 
 	    // 2. 각 프롬프트로 ComfyUI API 호출
 	    try {
-	        String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/flux_schnell_0306.json")));
+	        String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
 
             log.info("workflow::: {}", workflowJson);
             ObjectMapper mapper = new ObjectMapper();
@@ -158,7 +159,7 @@ public class BookStoryController {
 
 	    // 2. 각 프롬프트로 ComfyUI API 호출
 	    try {
-	        String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/flux_schnell_0306.json")));
+	        String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
 
             log.info("workflow::: {}", workflowJson);
             ObjectMapper mapper = new ObjectMapper();
@@ -204,6 +205,7 @@ public class BookStoryController {
 	@PostMapping("/generate-book")
 	public ResponseEntity<?> generateBook(@RequestBody GenerateBookRequest request) {
 	    log.info("동화 생성 요청 수신: {}", request);
+	    PagedStoryResponse result  ;
 
 	    // 유효성 검사 (옵션)
 	    if (request.getSelections() == null) {
@@ -212,8 +214,36 @@ public class BookStoryController {
 
 	    // 여기서 LLM 호출 로직 실행
 	    try {
-            PagedStoryResponse result = ollamaService.generatePagedStory(request);
-            return ResponseEntity.ok(result);
+             result = ollamaService.generatePagedStory(request);
+
+    	    List<Page> imageUrls = new ArrayList<>();
+    	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
+
+
+            log.info("workflow::: {}", workflowJson);
+            ObjectMapper mapper = new ObjectMapper();
+
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+            for ( PagedStoryResponse.Page  item : result.getPages()) {
+            	
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    try {
+                        // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
+                        // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
+                        String imageUrl = generateAndPollImage(item.getImagePrompt()); 
+                         item.setImageUrl(imageUrl); // 객체에 직접 세팅
+                    } catch (Exception e) {
+                        log.error("이미지 생성 실패: ", e);
+                    }
+                });
+                futures.add(future);
+            }
+
+         // 모든 페이지 생성이 끝날 때까지 대기 (최대 타임아웃 설정 권장)
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            
+            
         } catch (Exception e) {
             log.error("동화 생성 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -222,11 +252,12 @@ public class BookStoryController {
                             .pages(List.of())
                             .build());
         }
-	}
+        return ResponseEntity.ok(result);
+   	}
 	
 	private String generateAndPollImage(String promptUsed) throws Exception {
 	    // 1. 워크플로우 JSON 로드 및 프롬프트 치환
-	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/testWF22.json")));
+	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
 	    String modifiedJson = workflowJson.replace("{{user_prompt}}", 
 	        promptUsed + ", children's book illustration style, cute, vibrant colors, soft lighting");
         ObjectMapper mapper = new ObjectMapper();

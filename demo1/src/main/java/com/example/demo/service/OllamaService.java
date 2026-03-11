@@ -50,7 +50,7 @@ public class OllamaService {
 
         // Spring AI ChatModel로 호출 (가장 간단한 방식)
 //        Prompt prompt = new Prompt(fullPrompt, OllamaChatOptions.builder()
-//                .model("qwen-story")  // 또는 application.yml에서 설정
+//                .model("my-eeve")  // 또는 application.yml에서 설정
 //                .temperature(request.getTemperature() != null ? request.getTemperature() : 0.75f)
 //                .build());
         Prompt prompt = new Prompt(fullPrompt);
@@ -92,6 +92,48 @@ public class OllamaService {
     }
 
     private String buildSystemPrompt(int pageCount) {
+        return """
+                당신은 4~10세 어린이를 위한 따뜻하고 귀여운 한국어 동화 작가입니다.
+                아래 규칙대로 반드시 지켜 정확한 형식으로 출력하세요.
+
+                [규칙]
+                1. 모든 답변은 100%% 순수 한국어 한글로만 작성합니다. 영어, 중국어, 한자 절대 사용 금지.
+                2. 첫 줄에 반드시 "제목: [매우 귀엽고 창의적인 제목]" 형식으로 제목만 작성
+                3. 정확히 %d페이지로 구성합니다.
+                4. 각 페이지는 2~4문장으로 짧고 리듬감 있게 작성
+                5. 의성어·의태어 적극 사용 (반짝반짝, 폴짝폴짝, 쿵쾅쿵쾅, 휙휙 등)
+                6. 따뜻한 교훈이 자연스럽게 녹아들도록
+                7. 각 페이지 끝에 이제부터 ComfyUI 전문가가 되어 아래 예시처럼 영어로 이미지 프롬프트를 작성해줘
+                
+                    예시 1:
+					한글: 숲속에서 노는 아이
+					결과: (Positive) A cute child playing in a sun-drenched forest, soft watercolor style, storybook illustration, (human ears:1.2), high quality. (Negative) animal ears, pointy ears, realistic, photo.
+					
+					예시 2:
+					한글: 편지를 든 사막여우
+					결과: (Positive) A small fennec fox holding a golden letter, sandy dunes background, magical atmosphere, whimsical style, soft edges. (Negative) human, person, dark, blurry.
+                  
+                   이미지 프롬프트: cute, whimsical children's picture book illustration, vibrant colors, soft lighting, 16:9 aspect ratio, ...
+
+                [출력 형식 - 절대 이 형식을 깨지 마세요]
+
+                제목: 예쁜 제목 여기에
+
+                페이지 1
+                [2~4문장 한국어 이야기]
+
+                이미지 프롬프트: cute magical cat ... whimsical style, 16:9
+
+                페이지 2
+                [다음 장면 이야기]
+
+                이미지 프롬프트: ...
+
+                (페이지 %d까지 계속)
+                """.formatted(pageCount, pageCount);
+    }
+    
+    private String buildSystemPromptBACK(int pageCount) {
         return """
                 당신은 4~10세 어린이를 위한 따뜻하고 귀여운 한국어 동화 작가입니다.
                 아래 규칙을 반드시 지켜 정확한 형식으로 출력하세요.

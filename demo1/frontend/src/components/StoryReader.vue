@@ -55,6 +55,26 @@ import html2pdf from 'html2pdf.js'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import { nextTick } from 'vue'
+//import { useLocation } from 'vue-router'
+import { useRoute } from 'vue-router'  // ← useRoute import (useLocation 아님!)
+const route = useRoute()
+
+const title = decodeURIComponent(route.query?.title || titleFromQuery || '제목 없음')
+const pages = JSON.parse(decodeURIComponent(route.query?.pages || pagesFromQuery || []))
+
+// const urlParams = new URLSearchParams(window.location.search);
+// const title = decodeURIComponent(urlParams.get('title'));
+// const pages = JSON.parse(decodeURIComponent(urlParams.get('pages')));
+
+console.log('받은 title:', title)
+console.log('받은 pages:', pages)
+//console.log('현재 route.query:', route.query)
+console.log('현재 route.state:', route.state)
+console.log('받은 데이터:', { title, pages })
+
+//console.log(location);
+console.log(title);
+console.log(pages);
 
 const props = defineProps<{
   pages: Array<{ imageUrl: string; pageNumber: number }>

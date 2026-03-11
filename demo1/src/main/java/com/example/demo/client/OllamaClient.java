@@ -32,7 +32,7 @@ public class OllamaClient {
      */
     public String generate(String prompt, int maxLength) {
         String url = baseUrl + "/api/generate";
-        String model = "qwen-story";
+        String model = "my-eeve";
     	log.info("generate  prompt:: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();
