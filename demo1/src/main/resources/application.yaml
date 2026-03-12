@@ -35,3 +35,5 @@ comfyui:
 server: # 'server'도 최상위 계층이므로 한 칸 앞으로 당기는 것이 관례입니다.
   port: 8080
   shutdown: graceful
+  
+  
