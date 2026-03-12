@@ -12,6 +12,8 @@ import org.springframework.ai.ollama.api.OllamaChatOptions;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.client.OllamaClient;
+import com.example.demo.domain.character.CharacterPrompt;
+import com.example.demo.domain.character.CharacterRepository;
 import com.example.demo.dto.GenerateBookRequest;
 import com.example.demo.dto.GenerateBookRequest.StorySelections;
 import com.example.demo.dto.PagedStoryResponse;
@@ -32,6 +34,7 @@ public class OllamaService {
 
     private final OllamaClient ollamaClient;  // Ollama API 호출용 클라이언트 (RestTemplate, WebClient 등으로 구현)
     private final OllamaChatModel ollamaChatModel;
+    private final CharacterRepository characterRepository;
     
     public PagedStoryResponse generatePagedStory(GenerateBookRequest request) {
     	
@@ -39,7 +42,15 @@ public class OllamaService {
         // 1. 사용자 선택지 → 자연스러운 프롬프트로 변환
         String userChoices =  formatUserSelections(request.getSelections());
 
-        String systemPrompt = buildSystemPrompt(request.getPageCount());
+        String charId = "HERO_ALICE";
+        
+     // 1. DB에서 캐릭터 정보 조회
+        CharacterPrompt character = characterRepository.findById(charId)
+                .orElseThrow(() -> new RuntimeException("캐릭터 정보를 찾을 수 없습니다: " + charId));
+        
+        log.info("character:: {}",character);
+        
+        String systemPrompt = buildSystemPrompt(character, request.getPageCount());
         String fullPrompt = systemPrompt + "\n\n" + userChoices;
 
     	log.info("generatePagedStory  userChoices:: {}", userChoices);
@@ -91,7 +102,50 @@ public class OllamaService {
         return sb.toString();
     }
 
-    private String buildSystemPrompt(int pageCount) {
+    /**
+     * 캐릭터 정보를 동적으로 주입하는 시스템 프롬프트 생성기
+     */
+    private String buildSystemPrompt(CharacterPrompt character, int pageCount) {
+        return """
+                당신은 4~10세 어린이를 위한 따뜻하고 귀여운 한국어 동화 작가입니다.
+                
+                [주인공 설정]
+                - 외모: %s
+                - 화풍: %s
+                - 금지 요소: %s
+                
+                아래 규칙대로 반드시 지켜 정확한 형식으로 출력하세요.
+
+                [규칙]
+                1. 모든 답변은 100%% 순수 한국어 한글로만 작성합니다. (이미지 프롬프트 제외)
+                2. 첫 줄에 반드시 "제목: [매우 귀엽고 창의적인 제목]" 형식으로 제목만 작성
+                3. 정확히 %d페이지로 구성합니다.
+                4. 각 페이지 하단 '이미지 프롬프트'에는 반드시 주인공의 특징(%s)을 포함하세요.
+                
+                [출력 형식]
+                제목: 예쁜 제목 여기에
+
+                페이지 1
+                [이야기 내용]
+                이미지 프롬프트: (Positive) %s, [내용], (Negative) %s
+                
+                (페이지 %d까지 반복)
+                """.formatted(
+                    character.getAppearance(), 
+                    character.getArtStyle(),
+                    character.getNegative(),
+                    pageCount, 
+                    character.getAppearance(),
+                    character.getAppearance(), // 이미지 프롬프트 예시용
+                    character.getNegative(),   // 이미지 프롬프트 예시용
+                    pageCount
+                );
+    }
+    
+    private String buildSystemPrompt22222(CharacterPrompt character, int pageCount) {
+    	
+    	log.info("character::: {}", character);
+    	
         return """
                 당신은 4~10세 어린이를 위한 따뜻하고 귀여운 한국어 동화 작가입니다.
                 아래 규칙대로 반드시 지켜 정확한 형식으로 출력하세요.
