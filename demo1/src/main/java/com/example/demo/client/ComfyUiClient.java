@@ -41,7 +41,7 @@ public class ComfyUiClient {
 
     public ComfyUiClient(
             RestTemplate restTemplate,
-            @Value("${comfyui.base-url:http://127.0.0.1:8188}") String baseUrl
+            @Value("${comfyui.base-url:http://suh.local:8188}") String baseUrl
     ) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;

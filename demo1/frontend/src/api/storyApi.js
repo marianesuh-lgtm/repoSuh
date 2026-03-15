@@ -5,7 +5,7 @@ export const generateNextScene = (data) => axios.post('/api/story/next', data)
 export const generateImage = (data) => axios.post('/api/generate-image', data)
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8080',  // Spring Boot 서버 주소 (필요 시 변경)
+  baseURL: 'http://172.30.1.99:8080',  // Spring Boot 서버 주소 (필요 시 변경)
   timeout: 0,                    // 이미지 생성이 오래 걸릴 수 있으니 60초로 여유롭게
   headers: {
     'Content-Type': 'application/json',

@@ -21,6 +21,7 @@ public class CharacterPrompt {
     @Id
     private String charId;
     private String appearance;
+    private String personalityTraits;
     private String artStyle;
     private String negative;
 }

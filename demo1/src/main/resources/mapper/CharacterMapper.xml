@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.CharacterMapper">
+    
+    <insert id="insertPrompt">
+        INSERT INTO character_prompt (name, content)
+        VALUES (
+            #{name}, 
+            #{content, typeHandler=com.example.demo.typehandler.JsonbTypeHandler}
+        )
+    </insert>
+
+    <select id="findById" resultType="com.example.demo.dto.CharacterDTO">
+        SELECT id, name, content
+        FROM character_prompt
+        WHERE id = #{id}
+    </select>
+    
+</mapper>

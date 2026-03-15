@@ -125,7 +125,7 @@ public class BookController {
 
         HttpEntity<String> entity = new HttpEntity<>(finalJson, headers);
         String response = restTemplate.postForObject(
-            "http://127.0.0.1:8188/prompt",
+            "http://suh.local:8188/prompt",
             entity,
             String.class
         );

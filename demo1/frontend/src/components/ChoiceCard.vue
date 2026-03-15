@@ -11,10 +11,12 @@
         v-for="(opt, idx) in options"
         :key="idx"
         class="option-btn"
-        :class="{ selected: selected === opt }"
+        :class="{ 
+          /* ?. 를 사용해서 selected가 없어도 에러가 나지 않게 처리합니다 */
+          selected: (opt.code || opt) === (selected?.code || selected) }"
         @click="$emit('select', opt)"
       >
-        {{ opt }}
+         {{ typeof opt === 'object' ? opt.label : opt }}
       </button>
     </div>
   </div>

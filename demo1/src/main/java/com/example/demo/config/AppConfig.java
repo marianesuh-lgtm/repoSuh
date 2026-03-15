@@ -23,7 +23,7 @@ public class AppConfig {
 	@Bean
 	public WebClient ollamaWebClient(
 			WebClient.Builder builder,
-			@Value("${ollama.base-url:http://localhost:11434}") String baseUrl) {
+			@Value("${ollama.base-url:http://suh.local:11434}") String baseUrl) {
 		return builder
 				.baseUrl(baseUrl)
 				.build();

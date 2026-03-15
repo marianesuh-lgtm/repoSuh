@@ -29,18 +29,28 @@ public class GenerateBookRequest {
         @Setter
         @ToString
         public static class Step {
-            private String character;   // 기 단계에서만 의미 있음
-            private String place;       // 기 단계에서만 의미 있음
-            private String mood;        // 기 단계에서만 의미 있음
+            private SelectionItem character;   // 기 단계에서만 의미 있음
+            private SelectionItem place;       // 기 단계에서만 의미 있음
+            private SelectionItem mood;        // 기 단계에서만 의미 있음
 
-            private String event;       // 승 단계
-            private String companion;   // 승 단계
+            private SelectionItem event;       // 승 단계
+            private SelectionItem companion;   // 승 단계
 
-            private String problem;     // 전 단계
-            private String tryAction;   // 전 단계 (try는 예약어이므로 tryAction으로 변경)
+            private SelectionItem problem;     // 전 단계
+            private SelectionItem tryAction;   // 전 단계 (try는 예약어이므로 tryAction으로 변경)
 
-            private String solution;    // 결 단계
-            private String ending;      // 결 단계
+            private SelectionItem solution;    // 결 단계
+            private SelectionItem ending;      // 결 단계
+        }
+        
+        
+     // 2. code와 label을 동시에 받기 위한 클래스를 정의합니다.
+        @Getter
+        @Setter
+        @ToString
+        public static class SelectionItem {
+            private String code;
+            private String label;
         }
     }
 }

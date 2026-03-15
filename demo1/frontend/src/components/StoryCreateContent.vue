@@ -105,9 +105,9 @@
         <h3>📝 나의 선택 요약</h3>
         <div class="summary-grid">
           <div v-for="step in STEPS" :key="step" class="summary-item">
-            <strong>[{{ step }}단계] {{ STEP_LABELS[step].title }}</strong>
+            <strong>[{{ step }} 단계] {{ STEP_LABELS[step].title }}</strong>
             <div v-for="(val, i) in selections[step]" :key="i" class="summary-line">
-              • {{ val }}
+              • {{ val.label }}
             </div>
           </div>
         </div>
@@ -206,21 +206,90 @@ const STEP_LABELS = {
 
 const CHOICES = {
   기: {
-    character: { label: '주인공은 누구인가요?', emoji: '🦸', options: ['용감한 토끼 🐰', '마법사 고양이 🐱✨', '작은 용 🐲', '요정 공주 🧚', '로봇 강아지 🤖🐶', '외계인 친구 👽'] },
-    place: { label: '어디서 시작하나요?', emoji: '🏠', options: ['마법의 숲 🌲', '하늘 위 성 🏰☁️', '바닷속 마을 🌊🐟', '우주선 안 🚀', '사탕 왕국 🍬', '비밀 동굴 🕳️'] },
-    mood: { label: '오늘 기분은?', emoji: '😊', options: ['신나고 행복해요 😄', '조금 외로워요 😢', '뭔가 찾고 싶어요 🔍', '모험이 하고 싶어요 🗺️'] }
+    character: { label: '주인공은 누구인가요?', emoji: '🦸'
+    , options: [
+         { code: 'RABBIT', label: '용감한 토끼 🐰' },
+         { code: 'CAT',   label: '마법사 고양이 🐱✨' },
+         { code: 'DRAGON', label: '작은 용 🐲' },
+         { code: 'FAIRY', label: '요정 공주 🧚' },
+         { code: 'ROBOT', label: '로봇 강아지 🤖🐶' },
+         { code: 'ALIEN', label: '외계인 친구 👽' }
+       ] },
+    place: { label: '어디서 시작하나요?', emoji: '🏠'
+    , options: [
+         { code: 'PL001', label: '마법의 숲 🌲' },
+         { code: 'PL002', label: '하늘 위 성 🏰☁️' },
+         { code: 'PL003', label: '바닷속 마을 🌊🐟' },
+         { code: 'PL004', label: '우주선 안 🚀' },
+         { code: 'PL005', label: '사탕 왕국 🍬' },
+         { code: 'PL006', label: '비밀 동굴 🕳️' }
+    ] },
+    mood: { label: '오늘 기분은?', emoji: '😊', options: [
+         { code: 'MD001', label: '신나고 행복해요 😄' },
+         { code: 'MD002', label: '조금 외로워요 😢' },
+         { code: 'MD003', label: '뭔가 찾고 싶어요 🔍' },
+         { code: 'MD004', label: '모험이 하고 싶어요 🗺️' },
+    ] }
   },
   승: {
-    event: { label: '무슨 일이 생겼나요?', emoji: '✨', options: ['마법 편지가 왔어요 📬✨', '새 친구를 만났어요 👫', '신기한 물건을 발견했어요 🪄', '마을이 위험해졌어요 ⚠️', '보물 지도를 찾았어요 🗺️', '마법이 사라졌어요 💫'] },
-    companion: { label: '함께하는 친구는?', emoji: '🤝', options: ['말하는 새 🦜', '착한 도깨비 👹💚', '꼬마 요정 🧚', '현명한 할머니 👵', '용감한 기사 ⚔️', '혼자서 해요 💪'] }
+    event: { label: '무슨 일이 생겼나요?', emoji: '✨'
+    , options: [
+         { code: 'EV001', label: '마법 편지가 왔어요 📬✨' },
+         { code: 'EV002', label: '새 친구를 만났어요 👫' },
+         { code: 'EV003', label: '신기한 물건을 발견했어요 🪄' },
+         { code: 'EV004', label: '마을이 위험해졌어요 ⚠️' },
+         { code: 'EV005', label: '보물 지도를 찾았어요 🗺️' },
+         { code: 'EV006', label: '마법이 사라졌어요 💫' }
+    ] },
+    companion: { label: '함께하는 친구는?', emoji: '🤝'
+    , options: [
+         { code: 'CO001', label: '말하는 새 🦜' },
+         { code: 'CO002', label: '착한 도깨비 👹💚' },
+         { code: 'CO003', label: '꼬마 요정 🧚' },
+         { code: 'CO004', label: '현명한 할머니 👵' },
+         { code: 'CO005', label: '용감한 기사 ⚔️' },
+         { code: 'CO006', label: '혼자서 해요 💪' }
+    ] }
   },
   전: {
-    problem: { label: '어떤 문제가 생겼나요?', emoji: '😱', options: ['나쁜 마법사가 나타났어요 🧙‍♂️💀', '길을 잃어버렸어요 😰', '마법이 잘못됐어요 🌀', '친구가 사라졌어요 😭', '커다란 괴물이 왔어요 👾', '비밀 문이 잠겼어요 🔒'] },
-    tryAction: { label: '어떻게 해결하려 했나요?', emoji: '💡', options: ['용기를 내서 싸웠어요 ⚔️', '지혜롭게 생각했어요 🤔💡', '친구들에게 도움 요청 🙏', '마법 주문을 외웠어요 ✨', '노래를 불렀어요 🎵', '선물을 나눠줬어요 🎁'] }
+    problem: { label: '어떤 문제가 생겼나요?', emoji: '😱'
+    , options: [
+         { code: 'PR001', label: '나쁜 마법사가 나타났어요 🧙‍♂️💀' },
+         { code: 'PR002', label: '길을 잃어버렸어요 😰' },
+         { code: 'PR003', label: '마법이 잘못됐어요 🌀' },
+         { code: 'PR004', label: '친구가 사라졌어요 😭' },
+         { code: 'PR005', label: '커다란 괴물이 왔어요 👾' },
+         { code: 'PR006', label: '비밀 문이 잠겼어요 🔒' }
+    ] },
+    tryAction: { label: '어떻게 해결하려 했나요?', emoji: '💡'
+    , options: [
+         { code: 'TR001', label: '용기를 내서 싸웠어요 ⚔️' },
+         { code: 'TR002', label: '지혜롭게 생각했어요 🤔💡' },
+         { code: 'TR003', label: '친구들에게 도움 요청 🙏' },
+         { code: 'TR004', label: '마법 주문을 외웠어요 ✨' },
+         { code: 'TR005', label: '노래를 불렀어요 🎵' },
+         { code: 'TR006', label: '선물을 나눠줬어요 🎁' }
+    ] }
   },
   결: {
-    solution: { label: '어떻게 해결됐나요?', emoji: '🎉', options: ['사랑의 힘으로! 💕', '용기와 지혜로! 🦁💡', '모두 함께 협력해서! 🤝', '마법이 돌아와서! ✨', '예상치 못한 방법으로! 😲', '꿈에서 힌트를 얻어서! 💭'] },
-    ending: { label: '결말은 어떻게 됐나요?', emoji: '🌟', options: ['영원히 행복하게 살았어요 🌈', '새로운 모험을 떠났어요 🚀', '집으로 돌아왔어요 🏠❤️', '새 친구들과 함께 살아요 👨‍👩‍👧‍👦', '마을의 영웅이 됐어요 🏆', '멋진 선물을 받았어요 🎁'] }
+    solution: { label: '어떻게 해결됐나요?', emoji: '🎉'
+    , options: [
+         { code: 'SO001', label: '사랑의 힘으로! 💕' },
+         { code: 'SO002', label: '용기와 지혜로! 🦁💡' },
+         { code: 'SO003', label: '모두 함께 협력해서! 🤝' },
+         { code: 'SO004', label: '마법이 돌아와서! ✨' },
+         { code: 'SO005', label: '예상치 못한 방법으로! 😲' },
+         { code: 'SO006', label: '꿈에서 힌트를 얻어서! 💭' }
+    ] },
+    ending: { label: '결말은 어떻게 됐나요?', emoji: '🌟'
+    , options: [
+         { code: 'ED001', label: '영원히 행복하게 살았어요 🌈' },
+         { code: 'ED002', label: '새로운 모험을 떠났어요 🚀' },
+         { code: 'ED003', label: '집으로 돌아왔어요 🏠❤️' },
+         { code: 'ED004', label: '새 친구들과 함께 살아요 👨‍👩‍👧‍👦' },
+         { code: 'ED005', label: '마을의 영웅이 됐어요 🏆' },
+         { code: 'ED006', label: '멋진 선물을 받았어요 🎁' }
+    ] }
   }
 }
 
@@ -231,20 +300,35 @@ const STORY_IMAGES = {
   결: ['💕🌈', '🦁⭐', '🤝🎉', '✨🌟', '😲🎊', '💭🌙']
 }
 
+console.log("전체 CHOICES 데이터 구조:", CHOICES); // 👈 여기서 options 내부가 객체인지 확인!
+
 const currentStepKey = computed(() => STEPS[currentStep.value])
 const currentChoices = computed(() => CHOICES[currentStepKey.value] || {})
 const currentSelections = computed(() => selections.value[currentStepKey.value] || {})
 
 const allSelectedForStep = computed(() => {
+  console.log("allSelectedForStep");
+  console.log(Object.keys(currentChoices.value).every(k => currentSelections.value[k]));
   return Object.keys(currentChoices.value).every(k => currentSelections.value[k])
 })
 
-const handleSelect = (category, value) => {
+const handleSelect22 = (category, value) => {
   selections.value[currentStepKey.value] = {
     ...selections.value[currentStepKey.value],
     [category]: value
   }
 }
+
+const handleSelect = (category, value) => {
+  // value가 { code: '...', label: '...' } 인 상태로 들어와야 함
+  console.log("선택된 카테고리:", category);
+  console.log("전달된 값(value):", value);
+
+  selections.value[currentStepKey.value] = {
+    ...selections.value[currentStepKey.value],
+    [category]: value // 👈 여기서 value.label이 아니라 value 전체를 넣으세요!
+  };
+};
 
 const goPrev = () => {
   if (currentStep.value > 0) {
@@ -285,7 +369,7 @@ const buildPrompt = () => {
 7. 500~700자 내외로 작성`
 }
 
-const generateStory = async () => {
+const generateStory  = async () => {
     console.log("generateStory")
   isGenerating.value = true
  phase.value = 'story'
@@ -295,54 +379,17 @@ const generateStory = async () => {
   // 서버 호출 대신 임시 더미 데이터 사용
   await new Promise(resolve => setTimeout(resolve, 800))  // 0.8초 로딩 느낌 주기 (선택)
  try {
-//await new Promise(resolve => setTimeout(resolve, 2000))
-
-  // 임시로 사용할 더미 데이터 (실제 서버 응답 형식 흉내)
-  const fakeResult = {
-    title: "반짝이는 별빛 토끼의 모험",
-    pages: [
-      {
-        pageNumber: 1,
-        text: "옛날 옛적, 숲속에 반짝반짝 빛나는 작은 토끼가 살았어요.\n하늘에서 휙휙 날아온 마법 편지를 보고 깜짝 놀랐답니다!",
-        imagePrompt: "cute sparkling bunny in magical forest, surprised expression, glowing letter flying from sky, children's book illustration, vibrant colors, 16:9"
-      },
-      {
-        pageNumber: 2,
-        text: "편지를 열어보니 마법사 고양이가 도와달라는 내용이었어요.\n토끼는 폴짝폴짝 뛰며 친구를 만나러 갔답니다.",
-        imagePrompt: "brave bunny jumping through forest, magical cat waiting ahead, soft glowing light, whimsical style, 16:9"
-      },
-      {
-        pageNumber: 3,
-        text: "길을 가다 나쁜 마법사가 나타났어요!\n쿵쾅쿵쾅 다가오는 소리에 토끼는 살짝 무서웠지만 용기를 냈어요.",
-        imagePrompt: "dark evil wizard approaching cute bunny, bunny looking brave, forest background, dramatic lighting, 16:9"
-      },
-      {
-        pageNumber: 4,
-        text: "친구 새와 함께 힘을 모았어요.\n모두가 손을 맞잡고 마법사를 설득했답니다!",
-        imagePrompt: "bunny and talking bird holding hands with wizard, reconciliation scene, warm sunset, children's illustration, 16:9"
-      },
-      {
-        pageNumber: 5,
-        text: "마법사는 마음을 바꿔 착한 마법사가 되었어요.\n숲은 더 밝고 아름다워졌답니다.",
-        imagePrompt: "happy forest with bunny, bird, reformed wizard smiling together, rainbow sky, joyful children's book style, 16:9"
-      },
-      {
-        pageNumber: 6,
-        text: "토끼와 친구들은 영원히 행복하게 지냈어요.\n모험은 끝났지만 새로운 이야기가 기다리고 있답니다!",
-        imagePrompt: "bunny and friends waving goodbye under starry sky, magical forest at night, warm and happy ending, 16:9"
-      }
-    ]
-  }
-
+     const cleanedData = getCleanSelections();
     // 1. 사용자 선택 데이터 → 서버에 보낼 payload 준비
     const payload = {
-      selections: selections.value,  // { 기: {character: "...", ...}, 승: {...}, ... }
+      selections: cleanedData,  // { 기: {character: "...", ...}, 승: {...}, ... }
       pageCount: 6,                  // 페이지 수 (앱에서 고정하거나 사용자 선택 가능)
       format: 'paged',               // 서버에 "페이지별 구조로 반환해줘" 요청
       temperature: 0.75,             // 창의성 조절 (옵션)
       maxTokens: 1200                // 전체 토큰 제한 (옵션)
     }
 
+console.log("최종 보낼 데이터:", payload);    
     // 2. 서버 API 호출 (기존 generateBook 재활용)
     const result = await generateBook(payload)
     await nextTick()
@@ -351,31 +398,24 @@ const generateStory = async () => {
   // 컴포넌트가 아직 살아있는지 확인 (중요!)
     if (!isMounted.value) return  // 언마운트 됐으면 중단
 
-//   console.log(fakeResult.title);
-//   console.log(fakeResult.pages);
-
-  // 결과 데이터 채우기
-    // storyTitle.value = fakeResult.title || '마법의 동화'
-    // story.value = fakeResult.story || '동화 내용이 생성되었습니다!'
-
     console.log('서버 응답 받음:', result)
 
     storyTitle.value = result.title || '마법의 동화'
-    story.value = fakeResult.story || '동화 내용이 생성되었습니다!'
+    story.value = result.story || '동화 내용이 생성되었습니다!'
 
-    console.log(result.title  || '마법의 동화' );
+  //   console.log(result.title  || '마법의 동화' );
 
-   console.log(result.title);
-   console.log(result.pages);
+  //  console.log(result.title);
+  //  console.log(result.pages);
     
     // fakeResult.pages 데이터를 위에서 선언한 pages ref에 할당
     pages.value = result.pages.map(p => ({
       ...p,
       // 이미지가 없다면 임시 이미지를, 있다면 해당 URL을 사용
-      imageUrl: p.imageUrl || `https://picsum.photos/seed/${p.pageNumber}/800/450`
+      imageUrl: p.imageUrl 
     }));
 
-    console.log("슬라이드 데이터 준비 완료:", pages.value);
+//    console.log("슬라이드 데이터 준비 완료:", pages.value);
     // 이모지 랜덤 선택 (기존 로직 유지)
     // const emojis = STEPS.map(step => {
     //   const arr = STORY_IMAGES[step]
@@ -401,75 +441,74 @@ const generateStory = async () => {
   }
 }
 
-const generateStoryBBBB = async () => {
+const generateStory2222 = async () => {
+    console.log("generateStory")
   isGenerating.value = true
-  emit('update:phase', 'story')  // 필요하면 유지, 아니면 제거 가능
+ phase.value = 'story'
+  emit('update:phase', 'story')
 
-  try {
+  console.log('로딩 시작 → isGenerating:', isGenerating.value)
+  // 서버 호출 대신 임시 더미 데이터 사용
+  await new Promise(resolve => setTimeout(resolve, 800))  // 0.8초 로딩 느낌 주기 (선택)
+ try {
+     const cleanedData = getCleanSelections();
     // 1. 사용자 선택 데이터 → 서버에 보낼 payload 준비
     const payload = {
-      selections: selections.value,  // { 기: {character: "...", ...}, 승: {...}, ... }
+      selections: cleanedData,  // { 기: {character: "...", ...}, 승: {...}, ... }
       pageCount: 6,                  // 페이지 수 (앱에서 고정하거나 사용자 선택 가능)
       format: 'paged',               // 서버에 "페이지별 구조로 반환해줘" 요청
       temperature: 0.75,             // 창의성 조절 (옵션)
       maxTokens: 1200                // 전체 토큰 제한 (옵션)
     }
 
+console.log("최종 보낼 데이터:", payload);    
     // 2. 서버 API 호출 (기존 generateBook 재활용)
-    const result = await generateBook(payload)
-    await nextTick()
+   // const result = await generateBook(payload)
+ 
 
-    // 3. 서버 응답 처리 (result는 서버에서 반환한 JSON이라고 가정)
-    // if (!result.success) {
-    //   throw new Error(result.message || '동화 생성에 실패했습니다')
-    // }
+  // 컴포넌트가 아직 살아있는지 확인 (중요!)
 
-    // 서버에서 이런 형식으로 온다고 가정
-    // {
-    //   success: true,
-    //   title: "별빛 고양이의 모험",
-    //   pages: [
-    //     { text: "...", imagePrompt: "cute cat..." },
-    //     ...
-    //   ]
-    // }
 
-    console.log('서버 응답 받음:', result)
 
-    storyTitle.value = result.title || '마법의 동화'
-
-    console.log(result.title  || '마법의 동화' );
-
-    // 페이지별 데이터 저장 (StoryReader에서 사용할 수 있도록)
-    // 방법 1: Pinia store에 저장 (추천)
-    // useStoryStore().setStory(result)
-
-    if (!router) {
-    console.error('router가 없습니다! useRouter import 확인하세요')
-    return
-    }
-
-    // 방법 2: router 쿼리로 전달 (간단하지만 데이터 크면 제한 있음)
-    router.push({
-     name: 'StoryReader',
-     query: {
-             title: encodeURIComponent(result.title || '마법의 동화'),
-             pages: encodeURIComponent(JSON.stringify(result.pages || []))
-            }
-    })
-
-    // 또는 params + 상태 관리 조합
-    // router.push({ name: 'StoryReader', params: { storyId: result.id } })
-
-  } catch (err) {
-    console.error('동화 생성 실패:', err)
-    story.value = '앗! 마법이 잠깐 졸고 있어요 😴\n다시 한번 시도해 주세요!'
-    // 또는 alert나 toast로 사용자에게 보여주기
+} catch (err) {
+    console.error(err)
   } finally {
+    // 로딩 종료는 모든 게 끝난 후에
     isGenerating.value = false
+    console.log('로딩 종료')
   }
 }
 
+const getCleanSelections = () => {
+  const clean = {};
+  const result = {}; // 1. 여기서 변수를 선언합니다.
+  console.log("getCleanSelections selections.value");
+  console.log(selections.value);
+
+for (const stepKey in selections.value) {
+    result[stepKey] = {};
+    const stepData = selections.value[stepKey];
+    
+    for (const category in stepData) {
+      const item = stepData[category];
+      
+      // item이 객체인 경우, 필요한 정보(code, label)만 쏙 뽑아서 새 객체 생성
+      if (item && typeof item === 'object') {
+        result[stepKey][category] = {
+          code: item.code,
+          label: item.label
+        };
+      } else {
+        // 혹시나 문자열로 저장된 예외 케이스 처리
+        result[stepKey][category] = item;
+      }
+    }
+  }
+
+  console.log("getCleanSelections result");
+  console.log(result);
+  return result;
+};
 
 const handleTTS = () => {
     //console.log("handleTTS here 1")
@@ -842,7 +881,7 @@ const handleReset = () => {
 .connector {
   position: absolute;
   width: 60px;
-  height: 4px;
+  height: 6px;
   background: rgba(255, 255, 255, 0.2);
   margin-left: 60px;
   margin-top: -30px;
@@ -862,8 +901,8 @@ const handleReset = () => {
 /* 1. 섹션 제목 (h2): 질문 텍스트가 명확하게 보이도록 */
 h2 {
   /* 기존보다 훨씬 짙은 회색으로 변경 (가독성 핵심) */
-  color: #2d3436; 
-  font-size: 1.5rem;
+  color: #f9fcfd; 
+  font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 20px;
   

@@ -19,7 +19,7 @@ public class OllamaClient {
     private final String baseUrl;
 
     public OllamaClient(RestTemplate restTemplate,
-                        @Value("${ollama.base-url:http://localhost:11434}") String baseUrl) {
+                        @Value("${ollama.base-url:http://suh.local:11434}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }

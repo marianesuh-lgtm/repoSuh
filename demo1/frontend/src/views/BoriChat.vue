@@ -51,7 +51,7 @@ const generateFinalPrompt = async () => {
     // 로딩 상태 시작 (아이에게 "보리가 마법을 부리고 있어!"라고 보여주세요)
     console.log("서버로 데이터 전송 시작:", storyState);
 
-    const response = await axios.post('http://localhost:8080/api/chat/generate', {
+    const response = await axios.post('http://172.30.1.99:8080/api/chat/generate', {
       name: storyState.name,
       dress: storyState.dress,
       place: storyState.place

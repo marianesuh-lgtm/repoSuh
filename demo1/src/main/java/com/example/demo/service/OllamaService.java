@@ -42,15 +42,18 @@ public class OllamaService {
         // 1. 사용자 선택지 → 자연스러운 프롬프트로 변환
         String userChoices =  formatUserSelections(request.getSelections());
 
-        String charId = "HERO_ALICE";
+        String charId = request.getSelections().get기().getCharacter().getCode();
         
      // 1. DB에서 캐릭터 정보 조회
         CharacterPrompt character = characterRepository.findById(charId)
                 .orElseThrow(() -> new RuntimeException("캐릭터 정보를 찾을 수 없습니다: " + charId));
         
         log.info("character:: {}",character);
+        int tempCnt = request.getPageCount();
+            //tempCnt = 3;
         
-        String systemPrompt = buildSystemPrompt(character, request.getPageCount());
+        //String systemPrompt = buildSystemPrompt(character, request.getPageCount());
+        String systemPrompt = buildSystemPrompt(character, tempCnt);
         String fullPrompt = systemPrompt + "\n\n" + userChoices;
 
     	log.info("generatePagedStory  userChoices:: {}", userChoices);
@@ -66,14 +69,17 @@ public class OllamaService {
 //                .build());
         Prompt prompt = new Prompt(fullPrompt);
         
-        ChatResponse response = ollamaChatModel.call(prompt);
+       	log.info("generatePagedStory before ollamaChatModel.call(prompt)...  prompt:: {}", prompt);
+       	
+       ChatResponse response = ollamaChatModel.call(prompt);
        	log.info("generatePagedStory  response:: {}", response);
        String generatedText = response.getResult().getOutput().getText();
         
     	log.info("generatePagedStory  generatedText:: {}", generatedText);
         
         // 4. 응답 파싱 → 제목 + 페이지별 텍스트 + 이미지 프롬프트 추출
-        return parseToPagedResponse(generatedText, request.getPageCount());    }
+        //return parseToPagedResponse(generatedText, request.getPageCount());    }
+        return parseToPagedResponse(generatedText, tempCnt);    }
 
     private String formatUserSelections(StorySelections selections) {
         if (selections == null) return "";
@@ -82,21 +88,21 @@ public class OllamaService {
         sb.append("[선택된 이야기 요소]\n");
 
         if (selections.get기() != null) {
-            sb.append("- 주인공: ").append(selections.get기().getCharacter()).append("\n");
-            sb.append("- 장소: ").append(selections.get기().getPlace()).append("\n");
-            sb.append("- 기분/상황: ").append(selections.get기().getMood()).append("\n");
+            sb.append("- 주인공: ").append(selections.get기().getCharacter().getLabel()).append("\n");
+            sb.append("- 장소: ").append(selections.get기().getPlace().getLabel()).append("\n");
+            sb.append("- 기분/상황: ").append(selections.get기().getMood().getLabel()).append("\n");
         }
         if (selections.get승() != null) {
-            sb.append("- 사건: ").append(selections.get승().getEvent()).append("\n");
-            sb.append("- 동행: ").append(selections.get승().getCompanion()).append("\n");
+            sb.append("- 사건: ").append(selections.get승().getEvent().getLabel()).append("\n");
+            sb.append("- 동행: ").append(selections.get승().getCompanion().getLabel()).append("\n");
         }
         if (selections.get전() != null) {
-            sb.append("- 문제: ").append(selections.get전().getProblem()).append("\n");
-            sb.append("- 시도: ").append(selections.get전().getTryAction()).append("\n");
+            sb.append("- 문제: ").append(selections.get전().getProblem().getLabel()).append("\n");
+            sb.append("- 시도: ").append(selections.get전().getTryAction().getLabel()).append("\n");
         }
         if (selections.get결() != null) {
-            sb.append("- 해결: ").append(selections.get결().getSolution()).append("\n");
-            sb.append("- 엔딩: ").append(selections.get결().getEnding()).append("\n");
+            sb.append("- 해결: ").append(selections.get결().getSolution().getLabel()).append("\n");
+            sb.append("- 엔딩: ").append(selections.get결().getEnding().getLabel()).append("\n");
         }
 
         return sb.toString();
@@ -107,10 +113,11 @@ public class OllamaService {
      */
     private String buildSystemPrompt(CharacterPrompt character, int pageCount) {
         return """
-                당신은 4~10세 어린이를 위한 따뜻하고 귀여운 한국어 동화 작가입니다.
+                당신은 4~7세 어린이를 위한 따뜻하고 귀여운 한국어 동화 작가입니다.
                 
                 [주인공 설정]
                 - 외모: %s
+                - 성격: %s
                 - 화풍: %s
                 - 금지 요소: %s
                 
@@ -120,7 +127,8 @@ public class OllamaService {
                 1. 모든 답변은 100%% 순수 한국어 한글로만 작성합니다. (이미지 프롬프트 제외)
                 2. 첫 줄에 반드시 "제목: [매우 귀엽고 창의적인 제목]" 형식으로 제목만 작성
                 3. 정확히 %d페이지로 구성합니다.
-                4. 각 페이지 하단 '이미지 프롬프트'에는 반드시 주인공의 특징(%s)을 포함하세요.
+                4.  각 페이지는 2~4문장으로 짧고 리듬감 있게 작성합니다.
+                5. 각 페이지 하단 '이미지 프롬프트'에는 반드시 주인공의 특징(%s)을 포함하세요.
                 
                 [출력 형식]
                 제목: 예쁜 제목 여기에
@@ -132,10 +140,11 @@ public class OllamaService {
                 (페이지 %d까지 반복)
                 """.formatted(
                     character.getAppearance(), 
+                    character.getPersonalityTraits(), 
                     character.getArtStyle(),
                     character.getNegative(),
                     pageCount, 
-                    character.getAppearance(),
+                    character.getAppearance()+','+character.getPersonalityTraits(),
                     character.getAppearance(), // 이미지 프롬프트 예시용
                     character.getNegative(),   // 이미지 프롬프트 예시용
                     pageCount
@@ -222,7 +231,7 @@ public class OllamaService {
 
 //    private String callOllama(String fullPrompt, GenerateBookRequest request) {
 //        try {
-//            OllamaApi ollamaAPI = new OllamaApi("http://localhost:11434");
+//            OllamaApi ollamaAPI = new OllamaApi("http://suh.local:11434");
 //            ollamaAPI.setVerbose(true); // 디버깅용 로그 켜기
 //
 //            OllamaGenerateRequest ollamaReq = OllamaGenerateRequest.builder()

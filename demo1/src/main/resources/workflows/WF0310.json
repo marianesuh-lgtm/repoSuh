@@ -1,7 +1,7 @@
 {
   "3": {
     "inputs": {
-      "seed": 745048337422468,
+      "seed": 733682899396015,
       "steps": 20,
       "cfg": 8,
       "sampler_name": "euler",
@@ -57,7 +57,7 @@
       "proxies": "",
       "auth_data": "",
       "service": "GoogleTranslator",
-      "text": "{{user_prompt}}, children's book illustration style, cute, vibrant colors, soft lighting, 따뜻하고 순수한 분위기, 어린이 동화책 일러스트 스타일, 부드러운 파스텔 톤, whimsical fantasy, high detail, soft lighting, dreamy atmosphere ",
+      "text": "{{user_prompt}}, children's book illustration style, cute, vibrant colors, soft lighting, children's book illustration style, cute, vibrant colors, soft lighting, 따뜻하고 순수한 분위기, 어린이 동화책 일러스트 스타일, 부드러운 파스텔 톤, whimsical fantasy, high detail, soft lighting, dreamy atmosphere",
       "Show proxy": "proxy_hide",
       "Show authorization": "authorization_hide",
       "clip": [
@@ -72,7 +72,7 @@
   },
   "7": {
     "inputs": {
-      "text": "animal ears, fox ears on girl, tail on girl, furry, humanoid, monster girl, costume, cosplay, (bad anatomy), (distorted features), low quality, dark, text, watermark",
+      "text": "worst quality, low quality, blurry, deformed, animal ears, fox ears on girl, tail on girl, furry, humanoid, monster girl, costume, cosplay, (bad anatomy), (distorted features), dark, text, watermark",
       "clip": [
         "4",
         1

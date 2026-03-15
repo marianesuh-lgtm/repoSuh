@@ -1,39 +1,53 @@
 spring:
   application:
     name: demo1
-  main:
-    allow-bean-definition-overriding: true      
-  # 여기 아래 'ai'의 들여쓰기를 'main'과 같은 라인으로 맞추세요!
+  # H2 콘솔 활성화 (반드시 spring: 바로 아래, 2칸 들여쓰기)
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#      settings:
+#        web-allow-others: true
+
+  # DB 연결 설정
+  datasource:
+    url: jdbc:postgresql://localhost:5432/main_db
+    username: postgres # 혹은 새로 만든 유저
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  # JPA 및 하이버네이트 설정
+#  jpa:
+#    defer-datasource-initialization: true
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+  jpa:
+    hibernate:
+      ddl-auto: update # 테이블이 없으면 생성, 있으면 구조 수정
+    show-sql: true     # 실행되는 SQL을 콘솔에 출력 (디버깅용)
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.example.demo.handler
+
+  configuration:
+    map-underscore-to-camel-case: true # DB 컬럼명(snake_case)을 Java 필드(camelCase)로 자동 매핑
+    jdbc-type-for-null: OTHER # PostgreSQL의 JSONB/UUID 처리를 위해 필수
+# Ollama 설정
   ai:
     ollama:
-      base-url: http://localhost:11434
+      base-url: http://suh.local:11434
       chat:
         options:
-          model: my-eeve  # 이제 이 설정이 정상적으로 적용됩니다.
+          model: my-eeve
 
+# 최상위 계층
 comfyui:
-  base-url: http://127.0.0.1:8188
+  base-url: http://suh.local:8188
 
-  # H2 데이터베이스 콘솔 설정 (웹에서 DB 확인용)
-  h2:
-      console:
-        enabled: true
-        path: /h2-console
-  datasource:
-      # AUTO_SERVER=TRUE가 핵심입니다.
-      url: jdbc:h2:file:~/testdb;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1
-      driver-class-name: org.h2.Driver
-      initialization: true
-      username: sa
-      password:
-  jpa:
-      database-platform: org.hibernate.dialect.H2Dialect
-      defer-datasource-initialization: true  # 이 줄을 추가하세요!
-      hibernate:
-        ddl-auto: update
-      show-sql: true
-server: # 'server'도 최상위 계층이므로 한 칸 앞으로 당기는 것이 관례입니다.
+server:
   port: 8080
-  shutdown: graceful
-  
-  
+
