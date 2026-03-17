@@ -17,7 +17,7 @@ public class StoryGenerationService {
 
     public String askToOllama(String charId, String userTopic) {
         String systemPrompt = promptCompositeService.buildOllamaSystemPrompt(charId);
-        String url = "http://suh.local:11434/api/generate";
+        String url = "http://suhmac.local:11434/api/generate";
 
         // Ollama API 요청 데이터 구성 (JSON 형태)
         Map<String, Object> request = new HashMap<>();

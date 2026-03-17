@@ -31,18 +31,18 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 mybatis:
   mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: com.example.demo.handler
+  type-aliases-package: com.example.demo.dto
 
   configuration:
     map-underscore-to-camel-case: true # DB 컬럼명(snake_case)을 Java 필드(camelCase)로 자동 매핑
     jdbc-type-for-null: OTHER # PostgreSQL의 JSONB/UUID 처리를 위해 필수
 # Ollama 설정
   ai:
-    ollama:
-      base-url: http://suh.local:11434
+   ollama:
+      base-url: http://suhmac.local:11434
       chat:
         options:
-          model: my-eeve
+         model:EXAONE3.5
 
 # 최상위 계층
 comfyui:

@@ -2,6 +2,7 @@ package com.example.demo;
 
 import java.util.TimeZone;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
+@MapperScan("com.example.demo.mapper")
 public class Demo1Application {
 
 	@PostConstruct

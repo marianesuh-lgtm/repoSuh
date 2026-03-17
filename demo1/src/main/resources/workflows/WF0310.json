@@ -1,96 +1,165 @@
 {
-  "3": {
+  "10": {
     "inputs": {
-      "seed": 733682899396015,
-      "steps": 20,
-      "cfg": 8,
-      "sampler_name": "euler",
-      "scheduler": "normal",
-      "denoise": 1,
-      "model": [
-        "10",
-        0
-      ],
-      "positive": [
-        "6",
-        0
-      ],
-      "negative": [
-        "7",
-        0
-      ],
-      "latent_image": [
-        "5",
-        0
-      ]
-    },
-    "class_type": "KSampler",
-    "_meta": {
-      "title": "KSampler"
-    }
-  },
-  "4": {
-    "inputs": {
-      "ckpt_name": "zavyyumexl_v10.safetensors"
+      "ckpt_name": "juggernautXL_ragnarokBy.safetensors"
     },
     "class_type": "CheckpointLoaderSimple",
     "_meta": {
-      "title": "체크포인트 로드"
+      "title": "1. 메인 모델 로드"
     }
   },
-  "5": {
+  "12": {
     "inputs": {
-      "width": 512,
-      "height": 512,
-      "batch_size": 1
-    },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "빈 잠재 이미지"
-    }
-  },
-  "6": {
-    "inputs": {
-      "from_translate": "auto",
-      "to_translate": "english",
-      "add_proxies": false,
-      "proxies": "",
-      "auth_data": "",
-      "service": "GoogleTranslator",
-      "text": "{{user_prompt}}, children's book illustration style, cute, vibrant colors, soft lighting, children's book illustration style, cute, vibrant colors, soft lighting, 따뜻하고 순수한 분위기, 어린이 동화책 일러스트 스타일, 부드러운 파스텔 톤, whimsical fantasy, high detail, soft lighting, dreamy atmosphere",
-      "Show proxy": "proxy_hide",
-      "Show authorization": "authorization_hide",
+      "text": "{{user_character}}",
       "clip": [
         "10",
-        1
-      ]
-    },
-    "class_type": "DeepTranslatorCLIPTextEncodeNode",
-    "_meta": {
-      "title": "Deep Translator CLIP Text Encode Node"
-    }
-  },
-  "7": {
-    "inputs": {
-      "text": "worst quality, low quality, blurry, deformed, animal ears, fox ears on girl, tail on girl, furry, humanoid, monster girl, costume, cosplay, (bad anatomy), (distorted features), dark, text, watermark",
-      "clip": [
-        "4",
         1
       ]
     },
     "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+      "title": "2. 주인공 고양이 외형 설정"
     }
   },
-  "8": {
+  "13": {
+    "inputs": {
+      "text": "{{user_negative}}",
+      "clip": [
+        "10",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "5. 부정 프롬프트 (사람 제외 필수)"
+    }
+  },
+  "15": {
+    "inputs": {
+      "seed": 367009296940697,
+      "steps": 30,
+      "cfg": 7,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": [
+        "91",
+        0
+      ],
+      "positive": [
+        "21",
+        0
+      ],
+      "negative": [
+        "13",
+        0
+      ],
+      "latent_image": [
+        "100",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "10. 이미지 생성"
+    }
+  },
+  "20": {
+    "inputs": {
+      "text": "{{user_prompt}}",
+      "clip": [
+        "10",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "3. 상황 및 배경 프롬프트"
+    }
+  },
+  "21": {
+    "inputs": {
+      "conditioning_1": [
+        "12",
+        0
+      ],
+      "conditioning_2": [
+        "20",
+        0
+      ]
+    },
+    "class_type": "ConditioningCombine",
+    "_meta": {
+      "title": "4. 프롬프트 병합"
+    }
+  },
+  "36": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus_sdxl_vit-h.bin"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "6. 일반 IPAdapter Plus 로더"
+    }
+  },
+  "37": {
+    "inputs": {
+      "clip_name": "CLIP-ViT-H-14-laion2B-s32B-b79K.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "7. CLIP 비전 로드"
+    }
+  },
+  "91": {
+    "inputs": {
+      "weight": 0.75,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 1,
+      "embeds_scaling": "V only",
+      "model": [
+        "10",
+        0
+      ],
+      "ipadapter": [
+        "36",
+        0
+      ],
+      "image": [
+        "104",
+        0
+      ],
+      "clip_vision": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "9. 캐릭터 특징 주입 (IPAdapter Advanced)"
+    }
+  },
+  "100": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "11. 캔버스 설정"
+    }
+  },
+  "101": {
     "inputs": {
       "samples": [
-        "3",
+        "15",
         0
       ],
       "vae": [
-        "4",
+        "10",
         2
       ]
     },
@@ -99,11 +168,23 @@
       "title": "VAE 디코드"
     }
   },
-  "9": {
+  "102": {
+    "inputs": {
+      "images": [
+        "101",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "이미지 미리보기"
+    }
+  },
+  "103": {
     "inputs": {
       "filename_prefix": "ComfyUI",
       "images": [
-        "8",
+        "101",
         0
       ]
     },
@@ -112,23 +193,13 @@
       "title": "이미지 저장"
     }
   },
-  "10": {
+  "104": {
     "inputs": {
-      "lora_name": "HyperDetailedColoredPencilsZBaseF.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "4",
-        0
-      ],
-      "clip": [
-        "4",
-        1
-      ]
+      "url": "{{user_image}}"
     },
-    "class_type": "LoraLoader",
+    "class_type": "LoadImageFromURL",
     "_meta": {
-      "title": "LoRA 로드"
+      "title": "Load Images from URL"
     }
   }
 }

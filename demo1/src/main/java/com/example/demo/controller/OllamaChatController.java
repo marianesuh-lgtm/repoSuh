@@ -18,7 +18,7 @@ public class OllamaChatController {
     private final OllamaChatService ollamaChatService;
 
     /**
-     * 사용자 질문을 받아 Ollama(suh.local:11434)에 전달하고 답변을 반환합니다.
+     * 사용자 질문을 받아 Ollama(suhmac.local:11434)에 전달하고 답변을 반환합니다.
      * POST /api/chat/ask
      * Body: { "question": "질문 내용", "model": "my-eeve" }  (model은 선택)
      */

@@ -18,6 +18,8 @@ import com.example.demo.dto.GenerateBookRequest;
 import com.example.demo.dto.GenerateBookRequest.StorySelections;
 import com.example.demo.dto.PagedStoryResponse;
 import org.springframework.ai.ollama.OllamaChatModel;
+
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -231,7 +233,7 @@ public class OllamaService {
 
 //    private String callOllama(String fullPrompt, GenerateBookRequest request) {
 //        try {
-//            OllamaApi ollamaAPI = new OllamaApi("http://suh.local:11434");
+//            OllamaApi ollamaAPI = new OllamaApi("http://suhmac.local:11434");
 //            ollamaAPI.setVerbose(true); // 디버깅용 로그 켜기
 //
 //            OllamaGenerateRequest ollamaReq = OllamaGenerateRequest.builder()

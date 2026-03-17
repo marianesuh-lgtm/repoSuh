@@ -19,7 +19,7 @@ public class OllamaClient {
     private final String baseUrl;
 
     public OllamaClient(RestTemplate restTemplate,
-                        @Value("${ollama.base-url:http://suh.local:11434}") String baseUrl) {
+                        @Value("${ollama.base-url:http://suhmac.local:11434}") String baseUrl) {
         this.restTemplate = restTemplate;
         this.baseUrl = baseUrl;
     }
@@ -32,7 +32,7 @@ public class OllamaClient {
      */
     public String generate(String prompt, int maxLength) {
         String url = baseUrl + "/api/generate";
-        String model = "my-eeve";
+        String model = "EXAONE3.5";
     	log.info("generate  prompt:: {}", prompt);
 
         HttpHeaders headers = new HttpHeaders();

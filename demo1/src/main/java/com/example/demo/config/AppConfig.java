@@ -1,7 +1,9 @@
 package com.example.demo.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+//import org.springframework.boot.web.client.RestTemplateBuilder;
+//import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +25,7 @@ public class AppConfig {
 	@Bean
 	public WebClient ollamaWebClient(
 			WebClient.Builder builder,
-			@Value("${ollama.base-url:http://suh.local:11434}") String baseUrl) {
+			@Value("${ollama.base-url:http://suhmac.local:11434}") String baseUrl) {
 		return builder
 				.baseUrl(baseUrl)
 				.build();
