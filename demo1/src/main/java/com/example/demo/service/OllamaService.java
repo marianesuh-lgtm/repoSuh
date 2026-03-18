@@ -129,15 +129,15 @@ public class OllamaService {
                 1. 모든 답변은 100%% 순수 한국어 한글로만 작성합니다. (이미지 프롬프트 제외)
                 2. 첫 줄에 반드시 "제목: [매우 귀엽고 창의적인 제목]" 형식으로 제목만 작성
                 3. 정확히 %d페이지로 구성합니다.
-                4.  각 페이지는 2~4문장으로 짧고 리듬감 있게 작성합니다.
-                5. 각 페이지 하단 '이미지 프롬프트'에는 반드시 주인공의 특징(%s)을 포함하세요.
+                4.  각 페이지는 2~3문장으로 짧고 리듬감 있게 작성합니다.
+                5. 각 페이지 하단 'imagePrompt'에는 반드시 주인공의 특징(%s)을 포함하세요.
                 
                 [출력 형식]
                 제목: 예쁜 제목 여기에
 
                 페이지 1
                 [이야기 내용]
-                이미지 프롬프트: (Positive) %s, [내용], (Negative) %s
+                imagePrompt: (Positive) %s, [내용], (Negative) %s
                 
                 (페이지 %d까지 반복)
                 """.formatted(
@@ -286,8 +286,8 @@ public class OllamaService {
                 continue;
             }
 
-            if (line.startsWith("이미지 프롬프트:")) {
-                currentPrompt = line.replace("이미지 프롬프트:", "").trim();
+            if (line.startsWith("imagePrompt:")) {
+                currentPrompt = line.replace("imagePrompt:", "").trim();
             } else if (!line.isEmpty()) {
                 currentText += line + "\n";
             }

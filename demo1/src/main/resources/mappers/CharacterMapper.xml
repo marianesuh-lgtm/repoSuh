@@ -12,7 +12,7 @@
     </insert>
 
     <select id="retrieveCharacter" resultType="com.example.demo.dto.CharacterDTO">
-		select cp.char_id , cp.appearance , cp.art_style , cp.negative , cp.personality_traits 
+		select cp.char_id , cp.appearance , cp.art_style , cp.negative , cp.personality_traits , cp.url_img 
 		from character_prompt cp 
 		where cp.char_id =  #{id}
     </select>

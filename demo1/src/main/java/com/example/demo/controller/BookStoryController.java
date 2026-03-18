@@ -26,6 +26,7 @@ import com.example.demo.dto.PagedStoryResponse;
 import com.example.demo.dto.PagedStoryResponse.Page;
 import com.example.demo.service.CharacterService;
 import com.example.demo.service.OllamaService;
+import com.example.demo.service.OllamaTestService;
 import com.example.demo.util.JsonUtils;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -55,7 +56,8 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173"})
+//@CrossOrigin(origins = {"http://localhost:5173", "http://127.0.0.1:5173", })
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 //@RequiredArgsConstructor
 //@NoArgsConstructor  
@@ -66,17 +68,19 @@ public class BookStoryController {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final ChatClient chatClient ;
 	private final OllamaService ollamaService  ;  
+	private final OllamaTestService ollamaTestService  ;  
     private final CharacterService characterService ;
 
-	public BookStoryController(ChatClient.Builder builder, OllamaService ollamaService, CharacterService characterService ) {
+	public BookStoryController(ChatClient.Builder builder, OllamaService ollamaService,OllamaTestService ollamaTestService, CharacterService characterService ) {
         this.chatClient = builder.build();
         this.ollamaService = ollamaService;
+        this.ollamaTestService = ollamaTestService;
         this.characterService = characterService;
    }
     
  
 	
-	@PostMapping("/generate-book33")
+	@PostMapping("/generate-book-BACK")
 	public ResponseEntity<?> generateBook(@RequestBody GenerateBookRequest request) {
 	    log.info("동화 생성 요청 수신: {}", request);
 	    PagedStoryResponse result  ;
@@ -86,6 +90,11 @@ public class BookStoryController {
 	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
 	    }
 
+        String charId = request.getSelections().get기().getCharacter().getCode();
+        String mood = request.getSelections().get기().getMood().getLabel();
+
+        CharacterDTO character = characterService.getCharacterMapperInfo(charId);
+        
 	    // 여기서 LLM 호출 로직 실행
 	    try {
              result = ollamaService.generatePagedStory(request);
@@ -95,11 +104,10 @@ public class BookStoryController {
     	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
 
 
-            log.info("workflow::: {}", workflowJson);
+            //log.info("workflow::: {}", workflowJson);
             ObjectMapper mapper = new ObjectMapper();
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
-            String charId = request.getSelections().get기().getCharacter().getCode();
 
             for ( PagedStoryResponse.Page  item : result.getPages()) {
             	
@@ -107,7 +115,7 @@ public class BookStoryController {
                     try {
                         // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
                         // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
-                        String imageUrl = generateAndPollImage(item.getImagePrompt(), charId, item.getText()); 
+                        String imageUrl = generateAndPollImage(item, mood, character); 
                          item.setImageUrl(imageUrl); // 객체에 직접 세팅
                     } catch (Exception e) {
                         log.error("이미지 생성 실패: ", e);
@@ -130,7 +138,67 @@ public class BookStoryController {
         return ResponseEntity.ok(result);
    	}
 
+	
 	@PostMapping("/generate-book")
+	public ResponseEntity<?> generateStory(@RequestBody GenerateBookRequest request) {
+	    log.info("동화 생성 요청 수신: {}", request);
+	    PagedStoryResponse result  ;
+
+	    // 유효성 검사 (옵션)
+	    if (request.getSelections() == null) {
+	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
+	    }
+        String charId = request.getSelections().get기().getCharacter().getCode();
+        String mood = request.getSelections().get기().getMood().getLabel();
+
+        CharacterDTO character = characterService.getCharacterMapperInfo(charId);
+
+	    // 여기서 LLM 호출 로직 실행
+	    try {
+             result = ollamaTestService.generatePagedStory(request);
+
+             log.info("result:: {}", result);
+             log.info("result.getPages():: {}", result.getPages());
+    	    List<Page> imageUrls = new ArrayList<>();
+    	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
+
+
+           // log.info("workflow::: {}", workflowJson);
+            ObjectMapper mapper = new ObjectMapper();
+
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            //String charId = request.getSelections().get기().getCharacter().getCode();
+
+            for ( PagedStoryResponse.Page  item : result.getPages()) {
+            	
+                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                    try {
+                        // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
+                        // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
+                        String imageUrl = generateAndPollImage(item , mood, character ); 
+                         item.setImageUrl(imageUrl); // 객체에 직접 세팅
+                    } catch (Exception e) {
+                        log.error("이미지 생성 실패: ", e);
+                    }
+                });
+                futures.add(future);
+            }
+
+         // 모든 페이지 생성이 끝날 때까지 대기 (최대 타임아웃 설정 권장)
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();            
+            
+        } catch (Exception e) {
+            log.error("동화 생성 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(PagedStoryResponse.builder()
+                            .title("오류 발생")
+                            .pages(List.of())
+                            .build());
+        }
+        return ResponseEntity.ok(result);
+   	}
+	
+	@PostMapping("/generate-book2222")
 	public ResponseEntity<?> generateBook2(@RequestBody GenerateBookRequest request) {
 	    log.info("동화 생성 요청 수신: {}", request);
 	    PagedStoryResponse result  ;
@@ -140,6 +208,11 @@ public class BookStoryController {
 	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
 	    }
 
+        String charId = request.getSelections().get기().getCharacter().getCode();
+        String mood = request.getSelections().get기().getMood().getLabel();
+
+        CharacterDTO character = characterService.getCharacterMapperInfo(charId);
+	    
 	    // 여기서 LLM 호출 로직 실행
 	    try {
              result = ollamaService.generatePagedStory(request);
@@ -152,7 +225,7 @@ public class BookStoryController {
             ObjectMapper mapper = new ObjectMapper();
 
             List<CompletableFuture<Void>> futures = new ArrayList<>();
-            String charId = request.getSelections().get기().getCharacter().getCode();
+            //String charId = request.getSelections().get기().getCharacter().getCode();
 
             for ( PagedStoryResponse.Page  item : result.getPages()) {
             	
@@ -160,7 +233,7 @@ public class BookStoryController {
                     try {
                         // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
                         // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
-                        String imageUrl = generateAndPollImage(item.getImagePrompt(),charId, item.getText()); 
+                        String imageUrl = generateAndPollImage(item, mood, character ); 
                          item.setImageUrl(imageUrl); // 객체에 직접 세팅
                     } catch (Exception e) {
                         log.error("이미지 생성 실패: ", e);
@@ -186,37 +259,39 @@ public class BookStoryController {
 	
 	
 	
-	private String generateAndPollImage(String promptUsed, String charId, String story) throws Exception {
+	private String generateAndPollImage(PagedStoryResponse.Page item, String mood, CharacterDTO character) throws Exception {
 	    // 1. 워크플로우 JSON 로드 및 프롬프트 치환
 
-        CharacterDTO character = characterService.getCharacterMapperInfo(charId);
+       // CharacterDTO character = characterService.getCharacterMapperInfo(charId);
         
-        log.info("character:: {}",character);
+        //log.info("item:: {}",item);
 		
 		String charater = JsonUtils.escapeJsonValue(character.getAppearance());
-		String mood = JsonUtils.escapeJsonValue(character.getPersonalityTraits());
+		//String mood = JsonUtils.escapeJsonValue(character.getPersonalityTraits());
 		String background = "";
 		String style =JsonUtils.escapeJsonValue(character.getArtStyle());
 		String action ="";
 		String negative =JsonUtils.escapeJsonValue(character.getNegative());
-		String image = "http://172.30.1.99:8080/images/characters/CAT.png";
-		String story22 =JsonUtils.escapeJsonValue(story);
+		String image = "http://172.30.1.99:8080/images/characters/"+character.getUrlImg();
+		String story22 =JsonUtils.escapeJsonValue(item.getText());
 		
 	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/WF0310.json")));
-	    String modifiedJson = workflowJson.replace("{{user_prompt}}", story22 );
-//	    String modifiedJson = workflowJson.replace("{{user_action}}", story22 );
-	    modifiedJson = modifiedJson.replace("{{user_negative}}", negative );
-	    modifiedJson = modifiedJson.replace("{{user_character}}", charater );
-	    //modifiedJson = modifiedJson.replace("{{user_mood}}", "curious, brave, optimistic" );
-	    modifiedJson = modifiedJson.replace("{{user_background}}", background );
-	    //modifiedJson = modifiedJson.replace("{{user_style}}", style );
+	    String modifiedJson = workflowJson.replace("{{user_prompt}}"
+	    		       , item.getImagePrompt() + "," + item.getAction() + "," + item.getBackground() );
+//	    String modifiedJson = workflowJson.replace("{{user_prompt}}"
+//	    		 , charater+", "+ JsonUtils.escapeJsonValue(item.getMood())+","+ JsonUtils.escapeJsonValue(item.getBackground())+","+ JsonUtils.escapeJsonValue(item.getAction()) );
+	    modifiedJson = modifiedJson.replace("{{user_negative}}", negative +", extra arms, extra hands, fused fingers, malformed limbs" );
+//	    modifiedJson = modifiedJson.replace("{{user_character}}", charater );
+//	    modifiedJson = modifiedJson.replace("{{user_mood}}", JsonUtils.escapeJsonValue(item.getMood()) );
+//	    modifiedJson = modifiedJson.replace("{{user_background}}", JsonUtils.escapeJsonValue(item.getBackground()) );
+//	    modifiedJson = modifiedJson.replace("{{user_style}}", style );
 	    modifiedJson = modifiedJson.replace("{{user_image}}", image );
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         
         //log.info("prompt::: {}", promptUsed +","+story+ ", children's book illustration style, cute, vibrant colors, soft lighting");
-        log.info("generateAndPollImage modifiedJson::: {}", modifiedJson);
+        //log.info("generateAndPollImage modifiedJson::: {}", modifiedJson);
 
 	    // 2. ComfyUI 규격에 맞게 페이로드 생성
 	    Map<String, Object> workflow = mapper.readValue(modifiedJson, Map.class);
@@ -237,7 +312,7 @@ public class BookStoryController {
 	    // restTemplate은 Bean으로 등록된 것을 사용 (Thread-safe)
 	    String response = restTemplate.postForObject("http://suh.local:8188/prompt", entity, String.class);
 
-        log.info("generateAndPollImage response::: {}", response);
+        //log.info("generateAndPollImage response::: {}", response);
 	    stopWatch.stop(); // 측정 종료
 
 	   // log.info("Ollama 응답 완료! 소요 시간: {}s", stopWatch.getTotalTimeSeconds());

@@ -8,7 +8,7 @@
       "scheduler": "normal",
       "denoise": 1,
       "model": [
-        "30",
+        "26",
         0
       ],
       "positive": [
@@ -122,7 +122,7 @@
   },
   "26": {
     "inputs": {
-      "lora_name": "Kids_Redmond.safetensors",
+      "lora_name": "DaVinciDrawing01_CE_ZIMG_AIT4k.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -155,36 +155,6 @@
     "class_type": "CLIPVisionLoader",
     "_meta": {
       "title": "7. CLIP 비전 로드"
-    }
-  },
-  "30": {
-    "inputs": {
-      "weight": 0.7,
-      "weight_type": "linear",
-      "combine_embeds": "concat",
-      "start_at": 0.1,
-      "end_at": 0.3,
-      "embeds_scaling": "V only",
-      "model": [
-        "26",
-        0
-      ],
-      "ipadapter": [
-        "27",
-        0
-      ],
-      "image": [
-        "35",
-        0
-      ],
-      "clip_vision": [
-        "28",
-        0
-      ]
-    },
-    "class_type": "IPAdapterAdvanced",
-    "_meta": {
-      "title": "9. 캐릭터 특징 주입 (IPAdapter Advanced)"
     }
   },
   "35": {

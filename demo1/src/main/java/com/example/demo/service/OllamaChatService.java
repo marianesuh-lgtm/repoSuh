@@ -21,7 +21,7 @@ public class OllamaChatService {
         this.ollamaWebClient = ollamaWebClient;
     }
 
-    @Value("${ollama.default-model:EXAONE3.5}")
+    @Value("${ollama.default-model:gemma2}")
     private String defaultModel;
 
     /**

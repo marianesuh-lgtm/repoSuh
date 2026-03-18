@@ -42,7 +42,7 @@ mybatis:
       base-url: http://suhmac.local:11434
       chat:
         options:
-         model:EXAONE3.5
+         model:gemma2
 
 # 최상위 계층
 comfyui:

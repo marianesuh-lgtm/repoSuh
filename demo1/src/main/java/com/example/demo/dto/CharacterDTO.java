@@ -21,6 +21,10 @@ public class CharacterDTO {
 	private String artStyle ;
 	private String negative ;
 	private String personalityTraits ;
+	private String background ; 
+	private String mood ; 
+	private String problem ; 
+	private String urlImg ; 
 	
 
 }
