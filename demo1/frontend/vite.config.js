@@ -14,15 +14,16 @@ export default defineConfig({
     }  )],
   server: {
     host: '0.0.0.0', // 아이패드 접속 허용
+    allowedHosts: true, // 모든 호스트 허용
     proxy: {
       // 아이패드가 '/comfy-api'로 요청하면 에이서 노트북으로 전달해줌
       '/comfy-api': {
-        target: 'http://172.30.1.90:8188',
+        target: 'http://myshakes.ddns.net:8188',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/comfy-api/, '')
       },
       '/view': {
-        target: 'http://172.30.1.90:8188',
+        target: 'http://myshakes.ddns.net:8188',
         changeOrigin: true,
       }
     }
