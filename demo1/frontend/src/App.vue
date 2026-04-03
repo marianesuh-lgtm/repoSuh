@@ -9,8 +9,14 @@
 
     <div class="content-wrapper">
       <div class="header">
-        <div class="emoji-book">📖</div>
-        <h1 class="title">나만의 마법 동화 ✨</h1>
+        <div class="emoji-book">       <!-- 할머니 마스코트 -->
+</div>
+        <h1 class="title">        <img 
+          src="@/assets/MrsShakespeare2.png"    
+          alt="Mrs. Shakespeare"
+          class="mascot-image"
+        />
+나만의 마법 동화 ✨</h1>
         <p class="subtitle">나만의 이야기를 만들어봐요!</p>
       </div>
 

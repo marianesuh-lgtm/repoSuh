@@ -122,9 +122,9 @@
   },
   "26": {
     "inputs": {
-      "lora_name": "Kids_Redmond.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
+      "lora_name": "flat childrenXX.safetensors",
+      "strength_model": 0.65,
+      "strength_clip": 0.5,
       "model": [
         "10",
         0

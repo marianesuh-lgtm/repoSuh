@@ -1,0 +1,348 @@
+{
+  "13": {
+    "inputs": {
+      "width": 768,
+      "height": 768,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "빈 잠재 이미지"
+    }
+  },
+  "21": {
+    "inputs": {
+      "seed": 593718859120324,
+      "steps": 25,
+      "cfg": 3,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 0.7,
+      "model": [
+        "52",
+        0
+      ],
+      "positive": [
+        "107",
+        0
+      ],
+      "negative": [
+        "67",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "22": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "이미지 저장"
+    }
+  },
+  "23": {
+    "inputs": {
+      "samples": [
+        "21",
+        0
+      ],
+      "vae": [
+        "62",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE 디코드"
+    }
+  },
+  "27": {
+    "inputs": {
+      "text_input": "",
+      "task": "more_detailed_caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 3000,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 289132393164758,
+      "image": [
+        "35",
+        0
+      ],
+      "florence2_model": [
+        "29",
+        0
+      ]
+    },
+    "class_type": "Florence2Run",
+    "_meta": {
+      "title": "Florence2Run"
+    }
+  },
+  "29": {
+    "inputs": {
+      "model": "microsoft/Florence-2-base",
+      "precision": "fp16",
+      "attention": "sdpa",
+      "convert_to_safetensors": false
+    },
+    "class_type": "DownloadAndLoadFlorence2Model",
+    "_meta": {
+      "title": "DownloadAndLoadFlorence2Model"
+    }
+  },
+  "35": {
+    "inputs": {
+      "url": "{{user_image}}"
+    },
+    "class_type": "LoadImageFromURL",
+    "_meta": {
+      "title": "Load Images from URL"
+    }
+  },
+  "47": {
+    "inputs": {
+      "text_0": "The image is a digital illustration of a cute pink bunny sitting on its hind legs. The bunny has big, round eyes with big pink ears and a small nose. It has a pink body with white fur around its legs and feet. Its arms and legs are stretched out in front of it, and it is sitting on a white circle. The background is plain white. The overall style of the illustration is simple and cartoon-like.",
+      "text": [
+        "27",
+        2
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "Show Text 🐍"
+    }
+  },
+  "48": {
+    "inputs": {
+      "text_positive": "{{user_prompt}}",
+      "text_negative": "{{user_negative}}",
+      "style": "artstyle-watercolor",
+      "log_prompt": false,
+      "style_positive": true,
+      "style_negative": true
+    },
+    "class_type": "SDXLPromptStyler",
+    "_meta": {
+      "title": "SDXL Prompt Styler"
+    }
+  },
+  "50": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus_sdxl_vit-h.bin"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "6. 일반 IPAdapter Plus 로더"
+    }
+  },
+  "51": {
+    "inputs": {
+      "clip_name": "clip_vision_vit_h.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "7. CLIP 비전 로드"
+    }
+  },
+  "52": {
+    "inputs": {
+      "weight": 0.5,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0.2,
+      "end_at": 0.7,
+      "embeds_scaling": "V only",
+      "model": [
+        "64",
+        0
+      ],
+      "ipadapter": [
+        "50",
+        0
+      ],
+      "image": [
+        "35",
+        0
+      ],
+      "clip_vision": [
+        "51",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "54": {
+    "inputs": {
+      "value": "{{user_character}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "주인공"
+    }
+  },
+  "56": {
+    "inputs": {
+      "text1": [
+        "57",
+        0
+      ],
+      "text2": [
+        "48",
+        0
+      ],
+      "text3": [
+        "58",
+        0
+      ]
+    },
+    "class_type": "Text_Concatenate",
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "57": {
+    "inputs": {
+      "value": "{{user_background}}\n"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "배경"
+    }
+  },
+  "58": {
+    "inputs": {
+      "value": "inquisitive, determined"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "분위기/스타일"
+    }
+  },
+  "62": {
+    "inputs": {
+      "ckpt_name": "flux1-dev-fp8.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "체크포인트 로드"
+    }
+  },
+  "64": {
+    "inputs": {
+      "lora_name": "1751021779.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "62",
+        0
+      ],
+      "clip": [
+        "62",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
+    }
+  },
+  "67": {
+    "inputs": {
+      "text": [
+        "48",
+        1
+      ],
+      "clip": [
+        "64",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+    }
+  },
+  "104": {
+    "inputs": {
+      "text": [
+        "110",
+        0
+      ],
+      "clip": [
+        "64",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+    }
+  },
+  "106": {
+    "inputs": {
+      "text": [
+        "56",
+        0
+      ],
+      "clip": [
+        "62",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+    }
+  },
+  "107": {
+    "inputs": {
+      "conditioning_1": [
+        "106",
+        0
+      ],
+      "conditioning_2": [
+        "104",
+        0
+      ]
+    },
+    "class_type": "ConditioningCombine",
+    "_meta": {
+      "title": "조건 (결합)"
+    }
+  },
+  "110": {
+    "inputs": {
+      "text1": [
+        "47",
+        0
+      ],
+      "text2": [
+        "54",
+        0
+      ]
+    },
+    "class_type": "Text_Concatenate",
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  }
+}

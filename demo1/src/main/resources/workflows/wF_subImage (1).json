@@ -1,0 +1,512 @@
+{
+  "13": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "빈 잠재 이미지"
+    }
+  },
+  "21": {
+    "inputs": {
+      "seed": 784681277779621,
+      "steps": 25,
+      "cfg": 6,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 0.7,
+      "model": [
+        "114",
+        0
+      ],
+      "positive": [
+        "118",
+        0
+      ],
+      "negative": [
+        "67",
+        0
+      ],
+      "latent_image": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "22": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "23",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "이미지 저장"
+    }
+  },
+  "23": {
+    "inputs": {
+      "samples": [
+        "21",
+        0
+      ],
+      "vae": [
+        "119",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE 디코드"
+    }
+  },
+  "27": {
+    "inputs": {
+      "text_input": "",
+      "task": "more_detailed_caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 3000,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 1099562221825887,
+      "image": [
+        "35",
+        0
+      ],
+      "florence2_model": [
+        "29",
+        0
+      ]
+    },
+    "class_type": "Florence2Run",
+    "_meta": {
+      "title": "메인캐릭터Florence"
+    }
+  },
+  "29": {
+    "inputs": {
+      "model": "microsoft/Florence-2-base",
+      "precision": "fp16",
+      "attention": "sdpa",
+      "convert_to_safetensors": false
+    },
+    "class_type": "DownloadAndLoadFlorence2Model",
+    "_meta": {
+      "title": "DownloadAndLoadFlorence2Model"
+    }
+  },
+  "35": {
+    "inputs": {
+      "url": "{{user_image}}"
+    },
+    "class_type": "LoadImageFromURL",
+    "_meta": {
+      "title": "캐릭터이미지URL"
+    }
+  },
+  "47": {
+    "inputs": {
+      "text": [
+        "27",
+        2
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "메인캐릭터"
+    }
+  },
+  "48": {
+    "inputs": {
+      "text_positive": "{{user_prompt}}",
+      "text_negative": "{{user_negative}}",
+      "style": "artstyle-watercolor",
+      "log_prompt": false,
+      "style_positive": true,
+      "style_negative": true
+    },
+    "class_type": "SDXLPromptStyler",
+    "_meta": {
+      "title": "SDXL Prompt Styler"
+    }
+  },
+  "50": {
+    "inputs": {
+      "ipadapter_file": "ip-adapter-plus_sdxl_vit-h.bin"
+    },
+    "class_type": "IPAdapterModelLoader",
+    "_meta": {
+      "title": "6. 일반 IPAdapter Plus 로더"
+    }
+  },
+  "51": {
+    "inputs": {
+      "clip_name": "clip_vision_vit_h.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "7. CLIP 비전 로드"
+    }
+  },
+  "52": {
+    "inputs": {
+      "weight": 0.3,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 0.7,
+      "embeds_scaling": "V only",
+      "model": [
+        "64",
+        0
+      ],
+      "ipadapter": [
+        "50",
+        0
+      ],
+      "image": [
+        "35",
+        0
+      ],
+      "clip_vision": [
+        "51",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "IPAdapter Advanced"
+    }
+  },
+  "56": {
+    "inputs": {
+      "text1": [
+        "130:1",
+        0
+      ],
+      "text2": [
+        "113",
+        0
+      ]
+    },
+    "class_type": "Text_Concatenate",
+    "_meta": {
+      "title": "부캐릭터결합"
+    }
+  },
+  "62": {
+    "inputs": {
+      "ckpt_name": "zavyyumexl_v10.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "체크포인트 로드"
+    }
+  },
+  "64": {
+    "inputs": {
+      "lora_name": "1751021779.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "62",
+        0
+      ],
+      "clip": [
+        "62",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
+    }
+  },
+  "67": {
+    "inputs": {
+      "text": [
+        "48",
+        1
+      ],
+      "clip": [
+        "64",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+    }
+  },
+  "104": {
+    "inputs": {
+      "text": [
+        "110",
+        0
+      ],
+      "clip": [
+        "64",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+    }
+  },
+  "106": {
+    "inputs": {
+      "text": [
+        "56",
+        0
+      ],
+      "clip": [
+        "62",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+    }
+  },
+  "107": {
+    "inputs": {
+      "conditioning_1": [
+        "104",
+        0
+      ],
+      "conditioning_2": [
+        "106",
+        0
+      ]
+    },
+    "class_type": "ConditioningCombine",
+    "_meta": {
+      "title": "조건 (결합)"
+    }
+  },
+  "110": {
+    "inputs": {
+      "text1": [
+        "130:1",
+        0
+      ],
+      "text2": [
+        "47",
+        0
+      ],
+      "text3": [
+        "130:2",
+        0
+      ],
+      "text4": [
+        "130:0",
+        0
+      ],
+      "text5": [
+        "48",
+        0
+      ]
+    },
+    "class_type": "Text_Concatenate",
+    "_meta": {
+      "title": "메인중심결합"
+    }
+  },
+  "112": {
+    "inputs": {
+      "text_input": "",
+      "task": "more_detailed_caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 3000,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 614451281585037,
+      "image": [
+        "131",
+        0
+      ],
+      "florence2_model": [
+        "29",
+        0
+      ]
+    },
+    "class_type": "Florence2Run",
+    "_meta": {
+      "title": "부캐 florenceRun"
+    }
+  },
+  "113": {
+    "inputs": {
+      "text": [
+        "112",
+        2
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "부캐 Show Text 🐍"
+    }
+  },
+  "114": {
+    "inputs": {
+      "weight": 0.4,
+      "weight_type": "linear",
+      "combine_embeds": "concat",
+      "start_at": 0,
+      "end_at": 0.7,
+      "embeds_scaling": "V only",
+      "model": [
+        "52",
+        0
+      ],
+      "ipadapter": [
+        "50",
+        0
+      ],
+      "image": [
+        "131",
+        0
+      ],
+      "clip_vision": [
+        "51",
+        0
+      ]
+    },
+    "class_type": "IPAdapterAdvanced",
+    "_meta": {
+      "title": "부캐 IPAdapter"
+    }
+  },
+  "115": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "64",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "부캐 텍스트인코딩"
+    }
+  },
+  "117": {
+    "inputs": {
+      "conditioning_1": [
+        "67",
+        0
+      ],
+      "conditioning_2": [
+        "115",
+        0
+      ]
+    },
+    "class_type": "ConditioningCombine",
+    "_meta": {
+      "title": "조건 (결합)"
+    }
+  },
+  "118": {
+    "inputs": {
+      "conditioning_1": [
+        "107",
+        0
+      ],
+      "conditioning_2": [
+        "117",
+        0
+      ]
+    },
+    "class_type": "ConditioningCombine",
+    "_meta": {
+      "title": "조건 (결합)"
+    }
+  },
+  "119": {
+    "inputs": {
+      "vae_name": "sdxl_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "VAE 로드"
+    }
+  },
+  "124": {
+    "inputs": {
+      "value": 1,
+      "width": 1024,
+      "height": 1024
+    },
+    "class_type": "SolidMask",
+    "_meta": {
+      "title": "단색 마스크"
+    }
+  },
+  "128": {
+    "inputs": {
+      "x": 1,
+      "y": 0,
+      "width": 512,
+      "height": 1024,
+      "mask": [
+        "124",
+        0
+      ]
+    },
+    "class_type": "CropMask",
+    "_meta": {
+      "title": "마스크 자르기"
+    }
+  },
+  "131": {
+    "inputs": {
+      "url": "{{user_subImage}}"
+    },
+    "class_type": "LoadImageFromURL",
+    "_meta": {
+      "title": "서브이미지URL"
+    }
+  },
+  "130:0": {
+    "inputs": {
+      "value": "{{user_character}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "주인공"
+    }
+  },
+  "130:1": {
+    "inputs": {
+      "value": "{{user_background}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "배경"
+    }
+  },
+  "130:2": {
+    "inputs": {
+      "value": "{{user_mood}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "분위기/스타일"
+    }
+  }
+}

@@ -1,0 +1,359 @@
+{
+  "6": {
+    "inputs": {
+      "text": [
+        "56",
+        0
+      ],
+      "clip": [
+        "44",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "13",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE 디코드"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "이미지 저장"
+    }
+  },
+  "10": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "VAE 로드"
+    }
+  },
+  "13": {
+    "inputs": {
+      "noise": [
+        "25",
+        0
+      ],
+      "guider": [
+        "22",
+        0
+      ],
+      "sampler": [
+        "16",
+        0
+      ],
+      "sigmas": [
+        "17",
+        0
+      ],
+      "latent_image": [
+        "27",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "고급 사용자 정의 샘플러"
+    }
+  },
+  "16": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSampler (선택)"
+    }
+  },
+  "17": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 8,
+      "denoise": 1,
+      "model": [
+        "30",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "기본 스케줄러"
+    }
+  },
+  "22": {
+    "inputs": {
+      "model": [
+        "30",
+        0
+      ],
+      "conditioning": [
+        "26",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "기본 가이드"
+    }
+  },
+  "25": {
+    "inputs": {
+      "noise_seed": 313080988564648
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "무작위 노이즈"
+    }
+  },
+  "26": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "FLUX 가이드"
+    }
+  },
+  "27": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "빈 잠재 이미지 (SD3)"
+    }
+  },
+  "30": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": 1024,
+      "height": 1024,
+      "model": [
+        "47",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "모델 샘플링 (FLUX)"
+    }
+  },
+  "44": {
+    "inputs": {
+      "model_type": "flux",
+      "text_encoder1": "t5xxl_fp16.safetensors",
+      "text_encoder2": "clip_l.safetensors",
+      "t5_min_length": 512,
+      "use_4bit_t5": "disable",
+      "int4_model": "none"
+    },
+    "class_type": "NunchakuTextEncoderLoader",
+    "_meta": {
+      "title": "Nunchaku Text Encoder Loader (Deprecated)"
+    }
+  },
+  "45": {
+    "inputs": {
+      "model_path": "svdq-fp4_r32-flux.1-schnell.safetensors",
+      "cache_threshold": 0,
+      "attention": "nunchaku-fp16",
+      "cpu_offload": "auto",
+      "device_id": 0,
+      "data_type": "bfloat16",
+      "i2f_mode": "enabled"
+    },
+    "class_type": "NunchakuFluxDiTLoader",
+    "_meta": {
+      "title": "Nunchaku FLUX DiT Loader"
+    }
+  },
+  "46": {
+    "inputs": {
+      "lora_name": "Crayon Sketches - Weights Model.safetensors",
+      "lora_strength": 1,
+      "model": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "NunchakuFluxLoraLoader",
+    "_meta": {
+      "title": "Nunchaku FLUX LoRA Loader"
+    }
+  },
+  "47": {
+    "inputs": {
+      "lora_name": "ComicSketch02-00_CE_FLUX_AIT.safetensors",
+      "lora_strength": 1,
+      "model": [
+        "46",
+        0
+      ]
+    },
+    "class_type": "NunchakuFluxLoraLoader",
+    "_meta": {
+      "title": "Nunchaku FLUX LoRA Loader"
+    }
+  },
+  "48": {
+    "inputs": {
+      "text_input": "",
+      "task": "more_detailed_caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 1024,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 492196985387804,
+      "image": [
+        "58",
+        0
+      ],
+      "florence2_model": [
+        "50",
+        0
+      ]
+    },
+    "class_type": "Florence2Run",
+    "_meta": {
+      "title": "Florence2Run"
+    }
+  },
+  "49": {
+    "inputs": {
+      "text_0": "The image is an illustration of a young girl sitting in the middle of a cave. She is wearing a green dress and has long brown hair tied up in a bun. The cave is filled with lush greenery and colorful flowers, and there are two hanging lanterns hanging from the ceiling. The girl is smiling and looking at the camera. The background is a deep blue color, and the overall mood of the image is peaceful and serene.",
+      "text": [
+        "48",
+        2
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "Show Text 🐍"
+    }
+  },
+  "50": {
+    "inputs": {
+      "model": "microsoft/Florence-2-base",
+      "precision": "fp16",
+      "attention": "sdpa",
+      "convert_to_safetensors": false
+    },
+    "class_type": "DownloadAndLoadFlorence2Model",
+    "_meta": {
+      "title": "DownloadAndLoadFlorence2Model"
+    }
+  },
+  "53": {
+    "inputs": {
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "49",
+        0
+      ],
+      "text_b": [
+        "54",
+        0
+      ],
+      "text_c": [
+        "59",
+        0
+      ],
+      "text_d": [
+        "60",
+        0
+      ]
+    },
+    "class_type": "Text Concatenate",
+    "_meta": {
+      "title": "Text Concatenate"
+    }
+  },
+  "54": {
+    "inputs": {
+      "value": "{{user_prompt}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "주요이야기"
+    }
+  },
+  "56": {
+    "inputs": {
+      "text_positive": [
+        "53",
+        0
+      ],
+      "text_negative": "",
+      "style": "artstyle-watercolor",
+      "log_prompt": true,
+      "style_positive": true,
+      "style_negative": true
+    },
+    "class_type": "SDXLPromptStyler",
+    "_meta": {
+      "title": "SDXL Prompt Styler"
+    }
+  },
+  "58": {
+    "inputs": {
+      "url": "{{user_image}}"
+    },
+    "class_type": "LoadImageFromURL",
+    "_meta": {
+      "title": "메인캐릭터이미지URL"
+    }
+  },
+  "59": {
+    "inputs": {
+      "value": "{{user_background}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "배경"
+    }
+  },
+  "60": {
+    "inputs": {
+      "value": "{{user_mood}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "분위기"
+    }
+  }
+}

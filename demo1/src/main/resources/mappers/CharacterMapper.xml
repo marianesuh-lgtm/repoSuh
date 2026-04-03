@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.demo.mapper.CharacterMapper">
+<mapper namespace="com.mrs.shakes.mapper.CharacterMapper">
     
     <insert id="insertPrompt">
         INSERT INTO character_prompt (name, content)
         VALUES (
             #{name}, 
-            #{content, typeHandler=com.example.demo.handler.JsonbTypeHandler}
+            #{content, typeHandler=com.mrs.shakes.handler.JsonbTypeHandler}
         )
     </insert>
 
-    <select id="retrieveCharacter" resultType="com.example.demo.dto.CharacterDTO">
+    <select id="retrieveCharacter" resultType="com.mrs.shakes.dto.CharacterDTO">
 		select cp.char_id , cp.appearance , cp.art_style , cp.negative , cp.personality_traits , cp.url_img 
 		from character_prompt cp 
 		where cp.char_id =  #{id}
+    </select>
+
+    <select id="retrieveSubCharacter" resultType="com.mrs.shakes.dto.CharacterDTO">
+		select cp.sub_id , cp.sub_title, cp.sub_appearance , cp.sub_anti_yn , cp.sub_negative , cp.sub_url_img 
+		from sub_character  cp 
+		where cp.sub_id =  #{id}
     </select>
     
 </mapper>

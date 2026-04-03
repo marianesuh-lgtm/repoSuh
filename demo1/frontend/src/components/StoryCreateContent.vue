@@ -75,11 +75,17 @@
             alt="페이지"
           />
           
-          <div class="absolute bottom-0 left-0 right-0 p-8 bg-white/80 backdrop-blur-sm rounded-t-3xl shadow-xl">
-            <p class="text-xl font-nanum-pen leading-relaxed text-center text-white whitespace-pre-line drop-shadow-lg">
+<!-- ✅ 텍스트 영역 개선 -->
+        <div class="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-black/80 via-black/50 to-transparent rounded-t-3xl">
+          <p class="story-text">
+            {{ page.text }}
+          </p>
+        </div>
+                  <!-- <div class="absolute bottom-0 left-0 right-0 p-8 bg-white/80 backdrop-blur-sm rounded-t-3xl shadow-xl">
+            <p class="text-3xl font-nanum-pen leading-relaxed text-center text-white whitespace-pre-line drop-shadow-lg">
               {{ page.text }}
             </p>
-          </div>
+          </div> -->
           <div class="absolute top-4 right-4 bg-orange-500 text-white px-4 py-2 rounded-full text-lg">
             {{ index + 1 }} / {{ pages.length }}
           </div>
@@ -300,15 +306,15 @@ const STORY_IMAGES = {
   결: ['💕🌈', '🦁⭐', '🤝🎉', '✨🌟', '😲🎊', '💭🌙']
 }
 
-console.log("전체 CHOICES 데이터 구조:", CHOICES); // 👈 여기서 options 내부가 객체인지 확인!
+//console.log("전체 CHOICES 데이터 구조:", CHOICES); // 👈 여기서 options 내부가 객체인지 확인!
 
 const currentStepKey = computed(() => STEPS[currentStep.value])
 const currentChoices = computed(() => CHOICES[currentStepKey.value] || {})
 const currentSelections = computed(() => selections.value[currentStepKey.value] || {})
 
 const allSelectedForStep = computed(() => {
-  console.log("allSelectedForStep");
-  console.log(Object.keys(currentChoices.value).every(k => currentSelections.value[k]));
+  //console.log("allSelectedForStep");
+  //console.log(Object.keys(currentChoices.value).every(k => currentSelections.value[k]));
   return Object.keys(currentChoices.value).every(k => currentSelections.value[k])
 })
 
@@ -321,8 +327,8 @@ const handleSelect22 = (category, value) => {
 
 const handleSelect = (category, value) => {
   // value가 { code: '...', label: '...' } 인 상태로 들어와야 함
-  console.log("선택된 카테고리:", category);
-  console.log("전달된 값(value):", value);
+  //console.log("선택된 카테고리:", category);
+  //console.log("전달된 값(value):", value);
 
   selections.value[currentStepKey.value] = {
     ...selections.value[currentStepKey.value],
@@ -423,15 +429,15 @@ console.log("최종 보낼 데이터:", payload);
     // })
     // illustrationEmojis.value = emojis
 
-    console.log('이야기 생성 완료:', storyTitle.value)
+    //console.log('이야기 생성 완료:', storyTitle.value)
 
- console.log('데이터 채움 → isGenerating 유지 중:', isGenerating.value)
+ //console.log('데이터 채움 → isGenerating 유지 중:', isGenerating.value)
 
   await nextTick()
  await nextTick()  // 두 번 하면 더 확실
 
-    console.log('nextTick 후 story 값:', story.value)
-    console.log('nextTick 후 isGenerating:', isGenerating.value)
+    //console.log('nextTick 후 story 값:', story.value)
+    //console.log('nextTick 후 isGenerating:', isGenerating.value)
 } catch (err) {
     console.error(err)
   } finally {
@@ -442,7 +448,7 @@ console.log("최종 보낼 데이터:", payload);
 }
 
 const generateStory2222 = async () => {
-    console.log("generateStory")
+    //console.log("generateStory")
   isGenerating.value = true
  phase.value = 'story'
   emit('update:phase', 'story')
@@ -461,7 +467,7 @@ const generateStory2222 = async () => {
       maxTokens: 1200                // 전체 토큰 제한 (옵션)
     }
 
-console.log("최종 보낼 데이터:", payload);    
+//console.log("최종 보낼 데이터:", payload);    
     // 2. 서버 API 호출 (기존 generateBook 재활용)
    // const result = await generateBook(payload)
  
@@ -482,8 +488,8 @@ console.log("최종 보낼 데이터:", payload);
 const getCleanSelections = () => {
   const clean = {};
   const result = {}; // 1. 여기서 변수를 선언합니다.
-  console.log("getCleanSelections selections.value");
-  console.log(selections.value);
+  //console.log("getCleanSelections selections.value");
+  //console.log(selections.value);
 
 for (const stepKey in selections.value) {
     result[stepKey] = {};
@@ -505,8 +511,8 @@ for (const stepKey in selections.value) {
     }
   }
 
-  console.log("getCleanSelections result");
-  console.log(result);
+  //console.log("getCleanSelections result");
+  //console.log(result);
   return result;
 };
 
@@ -946,4 +952,37 @@ h2 {
   padding: 24px;
   margin-bottom: 32px;
 }
+
+/* Swiper 텍스트 크게 + 가독성 강화 */
+.story-text {
+  font-size: 2.1rem;           /* 원하는 크기로 조절하세요 */
+  line-height: 1.45;
+  font-family: 'Nanum Pen Script', cursive;
+  text-align: center;
+  color: white;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.85),
+               0 2px 6px rgba(0, 0, 0, 0.6);
+  font-weight: 700;
+  white-space: pre-line;
+  padding: 0 10px;
+}
+
+/* 반응형 - 화면이 작은 경우 조금 줄임 */
+@media (max-width: 768px) {
+  .story-text {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .story-text {
+    font-size: 2.1rem;
+  }
+}
+
+/* 배경 그라데이션 더 부드럽게 */
+.bg-gradient-to-t {
+  background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.6), transparent);
+}
+
 </style>
