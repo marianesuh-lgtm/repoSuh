@@ -37,5 +37,8 @@ public class StoryPage {
     private List<String> keyVocabulary; 
 
     private String pageStatus; 
+    
+    private String rawImageKeywords;
+
     // ... getter/setter
 }

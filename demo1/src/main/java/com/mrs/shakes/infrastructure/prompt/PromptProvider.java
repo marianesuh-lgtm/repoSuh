@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.springframework.stereotype.Component;
 
+import com.mrs.shakes.domain.story.StoryPage;
 import com.mrs.shakes.dto.CharacterDTO;
 //import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.stereotype.Service;
@@ -43,14 +44,14 @@ public class PromptProvider {
     /**
      * 2차 교정용(Refiner) 프롬프트 빌드
      */
-     public String getRefinerPrompt(String phase, String rawContent, String rawKeywords, CharacterDTO character, String context) {
+     public String getRefinerPrompt(StoryPage page, String context, CharacterDTO character) {
         String template = loadTemplate("story-refiner-v1.st");
         
         return template
-            .replace("{phase}", phase)
-            .replace("{context}", context.isEmpty() ? "이야기 시작 단계입니다." : context)
-            .replace("{rawContent}", rawContent)
-            .replace("{rawKeywords}", rawKeywords)
+            .replace("{phase}", page.getPhase())
+            .replace("{context}",  context.isEmpty() ? "이야기 시작 단계입니다." : context)
+            .replace("{rawContent}", page.getRawContent())
+            .replace("{rawKeywords}", page.getRawImageKeywords() )
             .replace("{appearance}", character.getAppearance());
     }   
      

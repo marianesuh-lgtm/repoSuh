@@ -19,5 +19,6 @@ public class RawStoryResponse {
         private String phase;      // 기, 승, 전, 결
         private String content;    // 1차 줄거리 초안
         private String raw_image_keywords; // 프롬프트에 정의한 필드명과 일치해야 함
-    }
+        private String rawImageKeywords; // 프롬프트에 정의한 필드명과 일치해야 함
+   }
 }

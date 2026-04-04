@@ -60,14 +60,22 @@ public class StoryService {
         // 1. AI 응답 받기
         //String aiResponse = ollamaService.ask(request); 
     	int pageCount = 6;
-        // 2. 초안 생성 (데이터 가공 및 엔티티 매핑)
-    	String systemPrompt = promptProvider.getGeneratorPrompt(character, pageCount);
+    	String context = "";
+    	StoryMaster master = this.createStoryDraft(character, pageCount);
+        log.info("master::: {}", master); 
+        log.info("초안 생성 완료: master_id={}", master.getId()); 
+       	
+        // 2. 각 페이지별 2차 Refining 진행
+        this.refineStoryPages(master, context, character );
         
-        log.info("systemPrompt::: {}", systemPrompt); 
+        // 2. 초안 생성 (데이터 가공 및 엔티티 매핑)
+    	//String systemPrompt = promptProvider.getGeneratorPrompt(character, pageCount);
+        
+        //log.info("systemPrompt::: {}", systemPrompt); 
 
-        String responseJson = ollamaClient.generate(systemPrompt);
+        //String responseJson = ollamaClient.generate(systemPrompt);
 
-        log.info("responseJson::: {}", responseJson); 
+        //log.info("responseJson::: {}", responseJson); 
         
         //Book storyDraft = 
     	//Long id = this.createStoryDraft(character, pageCount);
@@ -77,9 +85,30 @@ public class StoryService {
         
         //return BookResponse.from(savedBook);
     }    
+  
+    @Transactional
+    private void refineStoryPages(StoryMaster master, String context, CharacterDTO character) {
+    	
+    	String previousContext = "";
+    	
+        for (StoryPage page : master.getPages()) {
+            // 1. 리파이닝을 위한 프롬프트 구성 (예: 문장 다듬기)
+            String refinePrompt = promptProvider.getRefinerPrompt(page, previousContext, character );
+            
+            // 2. Ollama 호출
+            String refinedResponse = ollamaClient.generate(refinePrompt);
+            
+            // 3. 결과 업데이트 (StoryPage 엔티티에 refinedContent 필드가 있다고 가정)
+            // 만약 단순 텍스트만 온다면 그대로 저장, JSON이라면 파싱 로직 추가 필요
+            page.setRefinedContent(refinedResponse);
+            previousContext = page.getRawContent();
+            log.info("페이지 {}번 정제 완료", page.getPageNumber());
+        }
+        // @Transactional 어노테이션 덕분에 루프 종료 시 변경 감지(Dirty Checking)로 자동 업데이트 됩니다.
+    }    
     
     @Transactional
-    private Long createStoryDraft(CharacterDTO character, int pageCount) {
+    private StoryMaster createStoryDraft(CharacterDTO character, int pageCount) {
         // 1. 프롬프트 빌드 (Resource에서 읽어온 템플릿 사용)
         String systemPrompt = promptProvider.getGeneratorPrompt(character, pageCount);
         String responseJson = ollamaClient.generate(systemPrompt);
@@ -101,14 +130,16 @@ public class StoryService {
             for (RawPageResponse p : rawStory.getPages()) {
                 StoryPage page = new StoryPage();
                 page.setStory(master);
-                page.setPageNumber(p.getPageNumber());
-                page.setPhase(p.getPhase());
-                page.setRawContent(p.getContent());
-                //page.setRawImageKeywords(p.getRawImageKeywords());
+                page.setPageNumber(p.getPageNumber()); 
+                page.setPhase(p.getPhase()); 
+                page.setRawContent(p.getContent()); 
+                page.setRawImageKeywords(p.getRaw_image_keywords());
                 master.getPages().add(page);
             }
 
-            return storyMasterRepository.save(master).getId();
+            storyMasterRepository.save(master) ;
+            
+            return master;
             
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 파싱 중 오류가 발생했습니다.", e);
@@ -289,6 +320,13 @@ public class StoryService {
 		
 	}
 
-	
+    // 페이지 번호에 따라 기승전결(Phase)을 판단하는 간단한 로직
+    private String getPhase(int currentPage, int totalPages) {
+        float progress = (float) currentPage / totalPages;
+        if (progress <= 0.25) return "기 (도입, 배경 및 캐릭터 소개)";
+        if (progress <= 0.50) return "승 (전개, 사건의 시작)";
+        if (progress <= 0.75) return "전 (위기 및 갈등 심화)";
+        return "결 (결말 및 교훈)";
+    }	
 
 }
