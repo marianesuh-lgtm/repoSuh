@@ -155,10 +155,6 @@ public class OllamaTestService {
                     character.getSubAppearance(), 
                     pageCount,
                     character.getAppearance(),
- //                   character.getMood(),
-//                    character.getAppearance()+','+character.getPersonalityTraits(),
-//                    character.getAppearance(), // 이미지 프롬프트 예시용
-//                    character.getNegative(),   // 이미지 프롬프트 예시용
                     pageCount
                 );
     }
@@ -236,54 +232,6 @@ public class OllamaTestService {
         return "";
     }
 
-    private PagedStoryResponse parseToPagedResponse99(String rawResponse, int expectedPageCount) {
-        // 1. 모든 줄바꿈과 공백 정돈
-        String[] lines = rawResponse.split("\n");
-        List<PagedStoryResponse.Page> pages = new ArrayList<>();
-        
-        int pageNum = 0;
-        String currentText = "", currentBg = "", currentAction = "", currentMood = "";
-
-        for (String line : lines) {
-            line = line.trim();
-            if (line.isEmpty()) continue;
-
-            // 페이지 인식 (숫자가 포함된 '페이지' 라인 찾기)
-            if (line.contains("페이지") || line.contains("PAGE")) {
-                if (pageNum > 0) {
-                    pages.add(buildPage(pageNum, currentText, currentBg, currentAction, currentMood));
-                }
-                pageNum++;
-                currentText = ""; currentBg = ""; currentAction = ""; currentMood = "";
-                continue;
-            }
-
-            // 키워드별 매칭 (Gemma2는 콜론 앞뒤에 별표가 있을 수 있음)
-            if (line.toLowerCase().contains("background:")) {
-                currentBg = extractValue(line, "background:");
-            } else if (line.toLowerCase().contains("action:")) {
-                currentAction = extractValue(line, "action:");
-            } else if (line.toLowerCase().contains("mood:")) {
-                currentMood = extractValue(line, "mood:");
-            } else if (!line.contains(":") && pageNum > 0) {
-                // 키워드가 없는 일반 문장은 이야기 내용으로 간주
-                currentText += line + " ";
-            }
-        }
-//        log.info("parseToPagedResponse pageNum:: {}", pageNum);
-//        log.info("parseToPagedResponse currentText:: {}", currentText);
-//        log.info("parseToPagedResponse currentBackground:: {}", currentBg);
-//        log.info("parseToPagedResponse currentMood:: {}", currentMood);
-//        log.info("parseToPagedResponse currentAction:: {}", currentAction);
-        
-        // 마지막 페이지 추가
-        if (pageNum > 0) {
-            pages.add(buildPage(pageNum, currentText, currentBg, currentAction, currentMood));
-        }
-
-        log.info("parseToPagedResponse pages:: {}", pages);
-        return PagedStoryResponse.builder().pages(pages).build();
-    }
 
     private com.mrs.shakes.dto.PagedStoryResponse.Page buildPage(int num, String text, String bg, String action, String mood) {
         // 1. 이미지 생성용 통합 프롬프트 생성 (배경, 행동, 분위기 조합)
@@ -330,81 +278,6 @@ public class OllamaTestService {
                     .trim();
     }    
     
-    private PagedStoryResponse parseToPagedResponse333(String rawResponse, int expectedPageCount) {
-        List<String> lines = Arrays.stream(rawResponse.split("\n"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
-
-        String title = "무제";
-        List<PagedStoryResponse.Page> pages = new ArrayList<>();
-
-        String currentText = "";
-        String currentBackground = "";
-        String currentMood = "";
-        String currentAction = "";
-        int pageNum = 0;
-
-        for (String line : lines) {
-            // 1. 제목 처리
-            if (line.contains("제목:")) {
-                title = line.replace("제목:", "").replace("*", "").trim();
-                continue;
-            }
-
-            // 2. 페이지 시작 처리 (데이터 형식: **페이지 1**)
-            if (line.contains("페이지") && line.contains("**")) {
-                // 이전 페이지가 있다면 리스트에 추가
-                if (pageNum > 0) {
-                    pages.add(createPage(pageNum, currentText, currentBackground, currentMood, currentAction));
-                }
-                
-                pageNum++;
-                // 변수 초기화
-                currentText = "";
-                currentBackground = "";
-                currentMood = "";
-                currentAction = "";
-                continue;
-            }
-
-            // 3. 각 항목별 데이터 추출 (내용에 특정 키워드가 포함되었는지 확인)
-            if (line.contains("이야기 내용:")) {
-                // "이야기 내용:" 글자 자체는 제거
-                currentText += line.replace("이야기 내용:", "").replace("**", "").trim() + "\n";
-            } else if (line.toLowerCase().contains("background:")) {
-                currentBackground = line.split(":", 2)[1].replace("*", "").trim();
-            } else if (line.toLowerCase().contains("action:")) {
-                currentAction = line.split(":", 2)[1].replace("*", "").trim();
-            } else if (line.toLowerCase().contains("mood:")) {
-                currentMood = line.split(":", 2)[1].replace("*", "").trim();
-            } else if (line.startsWith("-") || line.contains("영어 프롬프트 요약")) {
-                // 하단의 요약 부분은 무시하거나 별도 처리
-                continue;
-            } else {
-                // 태그가 없는 일반 문장은 이야기 내용에 추가
-                currentText += line.replace("**", "").trim() + "\n";
-            }
-        }
-        
-        log.info("pageNum:: {}", pageNum);
-        log.info("currentText:: {}", currentText);
-        log.info("currentBackground:: {}", currentBackground);
-        log.info("currentMood:: {}", currentMood);
-        log.info("currentAction:: {}", currentAction);
-
-        // 마지막 페이지 저장
-        if (pageNum > 0) {
-            pages.add(createPage(pageNum, currentText, currentBackground, currentMood, currentAction));
-        }
-
-        log.info("pages:: {}", pages);
-        
-        return PagedStoryResponse.builder()
-                .title(title)
-                .pages(pages)
-                .build();
-    }
 
     // 가독성을 위한 페이지 생성 헬퍼 메소드
     private com.mrs.shakes.dto.PagedStoryResponse.Page createPage(int num, String text, String bg, String mood, String action) {
@@ -420,102 +293,7 @@ public class OllamaTestService {
     }    
 
     
-    private PagedStoryResponse parseToPagedResponse222(String rawResponse, int expectedPageCount) {
-        List<String> lines = Arrays.stream(rawResponse.split("\n"))
-                .map(String::trim)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.toList());
 
-        String title = "";
-        List<PagedStoryResponse.Page> pages = new ArrayList<>();
-
-        String currentText = "";
-        String currentPrompt = "";
-        String currentBackground = "";
-        String currentMood = "";
-        String currentAction = "";
-        int pageNum = 0;
-
-        for (String line : lines) {
-            if (line.startsWith("제목:")) {
-                title = line.replace("제목:", "").trim();
-                continue;
-            }
-
-            if (line.startsWith("#### 페이지 ")) {
-                // 이전 페이지 저장
-                if (pageNum > 0 && !currentText.isEmpty()) {
-                    pages.add(PagedStoryResponse.Page.builder()
-                            .pageNumber(pageNum)
-                            .text(currentText.trim())
-                            .imagePrompt(currentPrompt.trim())
-                            .build());
-                }
-                pageNum++;
-                currentText = "";
-                currentPrompt = "";
-                currentBackground = "";
-                currentMood = "";
-                currentAction = "";
-                continue;
-            }
-
-            if (line.startsWith("imagePrompt:")) {
-                currentPrompt = line.replace("imagePrompt:", "").trim();
-            } else if (!line.isEmpty()) {
-                currentText += line + "\n";
-            }
-
-            if (line.startsWith("**background:")) {
-                currentBackground = line.replace("**background:", "").trim();
-            } else if (!line.isEmpty()) {
-                currentText += line + "\n";
-            }
-            
-            if (line.startsWith("**mood:")) {
-                currentMood = line.replace("**mood:", "").trim();
-            } else if (!line.isEmpty()) {
-                currentText += line + "\n";
-            }
-
-            if (line.startsWith("**action:")) {
-            	currentAction = line.replace("**action:", "").trim();
-            } else if (!line.isEmpty()) {
-                currentText += line + "\n";
-            }
-//            log.info("currentBackground:: {}", currentBackground);            
-//            log.info("currentMood:: {}", currentMood);            
-log.info("currentAction:: {}", currentAction);            
-            
-        }
-
-        log.info("pageNum:: {}", pageNum);            
-        log.info("currentText:: {}", currentText);            
-        
-        // 마지막 페이지 저장
-        if (pageNum > 0 && !currentText.isEmpty()) {
-            pages.add(PagedStoryResponse.Page.builder()
-                    .pageNumber(pageNum)
-                    .text(currentText.trim())
-                    .imagePrompt(currentPrompt.trim())
-                    .background(currentBackground.trim())
-                    .mood(currentMood.trim())
-                    .action(currentAction.trim())
-                    .build());
-        }
-        log.info("pageNum:: {}", pageNum);            
-      log.info("pages:: {}", pages);            
-
-        // 페이지 수가 맞지 않으면 로그 남기기
-        if (pageNum != expectedPageCount) {
-            log.warn("요청한 페이지 수({})와 실제 생성 페이지 수({})가 다릅니다", expectedPageCount, pages.size());
-        }
-
-        return PagedStoryResponse.builder()
-                .title(title)
-                .pages(pages)
-                .build();
-    }
     
 	
 }

@@ -3,12 +3,16 @@ package com.mrs.shakes.controller;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -19,28 +23,102 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.mrs.shakes.dto.BookRequest;
+import com.mrs.shakes.dto.CharacterDTO;
+import com.mrs.shakes.dto.GenerateBookRequest;
+import com.mrs.shakes.dto.PagedStoryResponse;
 import com.mrs.shakes.dto.StoryRequest;
+import com.mrs.shakes.dto.PagedStoryResponse.Page;
+import com.mrs.shakes.service.CharacterService;
+import com.mrs.shakes.service.OllamaTestService;
+import com.mrs.shakes.service.StoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/chat")
 @CrossOrigin(origins = "http://localhost:5173")
 @Slf4j
-
-
+@RequiredArgsConstructor
+//@NoArgsConstructor  
 
 public class BookController {
 
 	private final ChatClient chatClient;  // Spring AI에서 주입
 	private final RestTemplate restTemplate = new RestTemplate();
 	private final ObjectMapper objectMapper = new ObjectMapper();
+    private final CharacterService characterService ;
+	private final OllamaTestService ollamaTestService  ; 
+	private final StoryService  storyService ;
 
-	public BookController(ChatClient.Builder builder ) {
-        this.chatClient = builder.build();
-    }
+//	public BookController(ChatClient.Builder builder ) {
+//        this.chatClient = builder.build();
+//    }
 
+
+	@PostMapping("/generate-book")
+	public ResponseEntity<?> generateStory(@RequestBody GenerateBookRequest request) {
+	    log.info("동화 생성 요청 수신: {}", request);
+	    PagedStoryResponse result  ;
+
+	    // 유효성 검사 (옵션)
+	    if (request.getSelections() == null) {
+	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
+	    }
+//        String charId = request.getSelections().get기().getCharacter().getCode();
+        String mood = request.getSelections().get기().getMood().getLabel();
+
+        //CharacterDTO character = characterService.getCharacterMapperInfo(charId);
+        CharacterDTO character = storyService.setCharacterDto(request);
+        storyService.generateStory(request, character);
+	    // 여기서 LLM 호출 로직 실행
+//	    try {
+             result = ollamaTestService.generatePagedStory(request, character);
+//
+//             log.info("result:: {}", result);
+//             log.info("result.getPages():: {}", result.getPages());
+//    	    List<Page> imageUrls = new ArrayList<>();
+//    	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/florenceWF.json")));
+//
+//
+//           // log.info("workflow::: {}", workflowJson);
+//            ObjectMapper mapper = new ObjectMapper();
+//
+//            List<CompletableFuture<Void>> futures = new ArrayList<>();
+//            //String charId = request.getSelections().get기().getCharacter().getCode();
+//
+//            for ( PagedStoryResponse.Page  item : result.getPages()) {
+//            	
+//                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+//                    try {
+//                        // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
+//                        // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
+//                        String imageUrl = storyService.generateAndPollImage(restTemplate, item , mood, character ); 
+//                         item.setImageUrl(imageUrl); // 객체에 직접 세팅
+//                    } catch (Exception e) {
+//                        log.error("이미지 생성 실패: ", e);
+//                    }
+//                });
+//                futures.add(future);
+//            }
+//
+//         // 모든 페이지 생성이 끝날 때까지 대기 (최대 타임아웃 설정 권장)
+//            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();            
+            
+//        } catch (Exception e) {
+//            log.error("동화 생성 실패", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(PagedStoryResponse.builder()
+//                            .title("오류 발생")
+//                            .pages(List.of())
+//                            .build());
+//        }
+        return ResponseEntity.ok(result);
+   	}
+	
+	
 	@PostMapping("/generate")
     public ResponseEntity<Map<String, String>> generateStory(@RequestBody StoryRequest request) {
         // 1. 프론트에서 받은 데이터를 바탕으로 프롬프트 조립
@@ -135,5 +213,7 @@ public class BookController {
 
         return ResponseEntity.ok(response);
     }  
+    
+    
 
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mrs.shakes.dto.NextSceneRequest;
 import com.mrs.shakes.dto.NextSceneResponse;
-import com.mrs.shakes.service.StoryService;
+import com.mrs.shakes.service.StoryTempService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class StoryController {
 
 	
-	private final StoryService storyService  ;
+	private final StoryTempService storyService  ;
 
     @PostMapping("/next")
     public ResponseEntity<NextSceneResponse> getNextScene(@RequestBody NextSceneRequest request) {
