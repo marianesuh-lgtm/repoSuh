@@ -18,6 +18,7 @@ public class CharacterDTO {
 	
 	private String charId ; 
 	private String appearance ; 
+	private String weakness ; 
 	private String artStyle ;
 	private String negative ;
 	private String personalityTraits ;

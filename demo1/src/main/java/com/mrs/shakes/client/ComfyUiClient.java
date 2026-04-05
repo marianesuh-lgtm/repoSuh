@@ -83,7 +83,7 @@ public class ComfyUiClient {
 
         try {
             HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-            log.info("request::: {}", request);
+            //log.info("request::: {}", request);
             @SuppressWarnings("unchecked")
             Map<String, Object> response = restTemplate.postForObject(url, request, Map.class);
             if (response == null || response.get("prompt_id") == null) {

@@ -4,8 +4,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpEntity;
@@ -30,7 +32,9 @@ import com.mrs.shakes.dto.GenerateBookRequest;
 import com.mrs.shakes.dto.PagedStoryResponse;
 import com.mrs.shakes.dto.RawStoryResponse;
 import com.mrs.shakes.dto.RawStoryResponse.RawPageResponse;
+import com.mrs.shakes.dto.RefinedStoryResponse;
 import com.mrs.shakes.dto.StoryRequest;
+import com.mrs.shakes.dto.GenerateBookRequest.StorySelections;
 import com.mrs.shakes.infrastructure.prompt.PromptProvider;
 import com.mrs.shakes.repository.StoryMasterRepository;
 import com.mrs.shakes.util.JsonUtils;
@@ -59,15 +63,24 @@ public class StoryService {
     public void generateStory(GenerateBookRequest request, CharacterDTO character) {
         // 1. AI 응답 받기
         //String aiResponse = ollamaService.ask(request); 
-    	int pageCount = 6;
+    	int pageCount = request.getPageCount();
     	String context = "";
-    	StoryMaster master = this.createStoryDraft(character, pageCount);
+    	StoryMaster master = this.createStoryDraft(request, character, pageCount);
         log.info("master::: {}", master); 
         log.info("초안 생성 완료: master_id={}", master.getId()); 
        	
         // 2. 각 페이지별 2차 Refining 진행
         this.refineStoryPages(master, context, character );
         
+        log.info("master::: {}", master.getTotalPages());
+        log.info("master::: {}", master.getTitle());
+        for (StoryPage page : master.getPages()) {
+            log.info("getPhase::: {}", page.getPhase());
+            log.info("getPageNumber::: {}", page.getPageNumber());
+            log.info("getRawContent::: {}", page.getRawContent());
+            log.info("getRawContent::: {}", page.getRefinedContent());
+        }
+     
         // 2. 초안 생성 (데이터 가공 및 엔티티 매핑)
     	//String systemPrompt = promptProvider.getGeneratorPrompt(character, pageCount);
         
@@ -91,27 +104,59 @@ public class StoryService {
     	
     	String previousContext = "";
     	
-        for (StoryPage page : master.getPages()) {
+    	// 1. 순서 보장을 위해 페이지 번호순으로 정렬해서 순회 (중요)
+        List<StoryPage> pages = master.getPages().stream()
+                .sorted(Comparator.comparing(StoryPage::getPageNumber))
+                .toList();
+    	
+        for (StoryPage page : pages) {
             // 1. 리파이닝을 위한 프롬프트 구성 (예: 문장 다듬기)
             String refinePrompt = promptProvider.getRefinerPrompt(page, previousContext, character );
             
             // 2. Ollama 호출
-            String refinedResponse = ollamaClient.generate(refinePrompt);
+            String rawResponse = this.forceCloseJson(ollamaClient.generate(refinePrompt));
+ 
+         // JSON 변환 수행
+            RefinedStoryResponse refined = this.parseRefinedResponse(rawResponse);
+
+            log.info("setRefinedContent:::{}", refined.getRefined_content());
             
+            // 엔티티에 값 세팅
+            page.setRefinedContent(refined.getRefined_content());
+            page.setRefinedImagePrompt(refined.getImage_prompt()); // DB 필드명에 맞게 조절            
             // 3. 결과 업데이트 (StoryPage 엔티티에 refinedContent 필드가 있다고 가정)
             // 만약 단순 텍스트만 온다면 그대로 저장, JSON이라면 파싱 로직 추가 필요
-            page.setRefinedContent(refinedResponse);
-            previousContext = page.getRawContent();
+            //page.setRefinedContent(rawResponse);
+            //master.getPages().add(page);
+            
+            previousContext = refined.getRefined_content() ;
             log.info("페이지 {}번 정제 완료", page.getPageNumber());
         }
+        storyMasterRepository.save(master) ;
         // @Transactional 어노테이션 덕분에 루프 종료 시 변경 감지(Dirty Checking)로 자동 업데이트 됩니다.
     }    
     
+    public String forceCloseJson(String rawResponse) {
+        rawResponse = rawResponse.trim();
+        
+        // 만약 닫는 괄호가 없으면 강제로 추가
+        if (rawResponse.startsWith("{") && !rawResponse.endsWith("}")) {
+            // 마지막으로 정상적인 값이 들어있는 위치를 찾음
+            int lastQuoteIndex = rawResponse.lastIndexOf("\"");
+            if (lastQuoteIndex != -1) {
+                // " 뒤에 필드를 강제로 닫아줌
+                return rawResponse.substring(0, lastQuoteIndex + 1) + " }";
+            }
+        }
+        return rawResponse;
+    }
+    
     @Transactional
-    private StoryMaster createStoryDraft(CharacterDTO character, int pageCount) {
+    private StoryMaster createStoryDraft(GenerateBookRequest request, CharacterDTO character, int pageCount) {
         // 1. 프롬프트 빌드 (Resource에서 읽어온 템플릿 사용)
+        String userChoices =  formatUserSelections(request.getSelections());
         String systemPrompt = promptProvider.getGeneratorPrompt(character, pageCount);
-        String responseJson = ollamaClient.generate(systemPrompt);
+        String responseJson = ollamaClient.generate(systemPrompt + "\n\n" + userChoices );
         
         try {
             // Ollama 응답에서 실제 JSON 부분만 추출하는 방어 로직 (LLM 특성상 설명 문구가 섞일 수 있음)
@@ -299,6 +344,7 @@ public class StoryService {
         String charId = request.getSelections().get기().getCharacter().getCode();
         String subId = request.getSelections().get승().getCompanion().getCode();
         String mood = request.getSelections().get기().getMood().getLabel();
+        String weakness = request.getSelections().get전().getProblem().getLabel();
 
         CharacterDTO character = characterService.getCharacterMapperInfo(charId);
         
@@ -309,6 +355,7 @@ public class StoryService {
         character.setSubNegative(subCharacter.getSubNegative());
         character.setSubUrlImg(subCharacter.getSubUrlImg());
 
+        character.setWeakness(request.getSelections().get전().getProblem().getLabel());
         character.setBackground(request.getSelections().get기().getPlace().getLabel());
         character.setMood(request.getSelections().get기().getMood().getLabel());
         character.setProblem(request.getSelections().get전().getProblem().getLabel());
@@ -320,6 +367,34 @@ public class StoryService {
 		
 	}
 
+    private String formatUserSelections(StorySelections selections) {
+        if (selections == null) return "";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("[선택된 이야기 요소]\n");
+
+        if (selections.get기() != null) {
+            sb.append("- 주인공: ").append(selections.get기().getCharacter().getLabel()).append("\n");
+            sb.append("- 장소: ").append(selections.get기().getPlace().getLabel()).append("\n");
+            sb.append("- 기분/상황: ").append(selections.get기().getMood().getLabel()).append("\n");
+        }
+        if (selections.get승() != null) {
+            sb.append("- 사건: ").append(selections.get승().getEvent().getLabel()).append("\n");
+            sb.append("- 동행: ").append(selections.get승().getCompanion().getLabel()).append("\n");
+        }
+        if (selections.get전() != null) {
+            sb.append("- 문제: ").append(selections.get전().getProblem().getLabel()).append("\n");
+            sb.append("- 시도: ").append(selections.get전().getTryAction().getLabel()).append("\n");
+        }
+        if (selections.get결() != null) {
+            sb.append("- 해결: ").append(selections.get결().getSolution().getLabel()).append("\n");
+            sb.append("- 엔딩: ").append(selections.get결().getEnding().getLabel()).append("\n");
+        }
+
+        return sb.toString();
+    }
+	
+	
     // 페이지 번호에 따라 기승전결(Phase)을 판단하는 간단한 로직
     private String getPhase(int currentPage, int totalPages) {
         float progress = (float) currentPage / totalPages;
@@ -327,6 +402,31 @@ public class StoryService {
         if (progress <= 0.50) return "승 (전개, 사건의 시작)";
         if (progress <= 0.75) return "전 (위기 및 갈등 심화)";
         return "결 (결말 및 교훈)";
-    }	
+    }
+    
+    public RefinedStoryResponse parseRefinedResponse(String jsonResponse) {
+        try {
+            // 1. 방어 로직: Ollama가 앞뒤에 붙인 불필요한 텍스트 제거
+            int startIndex = jsonResponse.indexOf("{");
+            int endIndex = jsonResponse.lastIndexOf("}");
+            
+            if (startIndex == -1 || endIndex == -1) {
+            	log.error("잘못된 AI 응답: {}", jsonResponse);
+            	throw new RuntimeException("유효한 JSON 응답을 찾을 수 없습니다.");
+            }
+            
+            String cleanJson = jsonResponse.substring(startIndex, endIndex + 1).replaceAll("\\r\\n|\\r|\\n", " ");
+
+            // 2. String -> Object 변환
+            return objectMapper.readValue(cleanJson, RefinedStoryResponse.class);
+
+        } catch (JsonProcessingException e) {
+        	// 만약 끝이 잘린 경우(Unexpected end-of-input)를 위한 예외 처리
+            log.error("AI 응답이 불완전합니다. 재시도를 권장합니다.");
+            // 여기서 재시도 로직을 태우거나, 기본값을 반환하는 처리가 필요합니다.
+            log.error("JSON 파싱 에러 발생: {}", e.getMessage());
+            throw new RuntimeException("데이터 변환 중 오류가 발생했습니다.", e);
+        }
+    }    
 
 }

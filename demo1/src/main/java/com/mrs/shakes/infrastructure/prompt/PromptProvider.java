@@ -33,6 +33,7 @@ public class PromptProvider {
         // 템플릿 내의 {variable} 들을 실제 값으로 치환
         return template
             .replace("{appearance}", character.getAppearance())
+            .replace("{weakness}", character.getWeakness())
             .replace("{personality}", character.getPersonalityTraits())
             .replace("{artStyle}", character.getArtStyle())
             .replace("{negative}", character.getNegative())
@@ -49,9 +50,9 @@ public class PromptProvider {
         
         return template
             .replace("{phase}", page.getPhase())
-            .replace("{context}",  context.isEmpty() ? "이야기 시작 단계입니다." : context)
-            .replace("{rawContent}", page.getRawContent())
-            .replace("{rawKeywords}", page.getRawImageKeywords() )
+            .replace("{previousContext}",  context.isEmpty() ? "이야기 시작 단계입니다." : context)
+            .replace("{content}", page.getRawContent())
+            .replace("{raw_image_description}", page.getRawImageKeywords() )
             .replace("{appearance}", character.getAppearance());
     }   
      

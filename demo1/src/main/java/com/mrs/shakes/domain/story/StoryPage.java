@@ -34,11 +34,19 @@ public class StoryPage {
     private String refinedContent;
 
     // JSONB 매핑을 위해 @JdbcTypeCode(SqlTypes.JSON) 등을 사용 (Hibernate 6 기준)
+    @Column(columnDefinition = "TEXT")
     private List<String> keyVocabulary; 
 
     private String pageStatus; 
     
+    @Column(columnDefinition = "TEXT")
     private String rawImageKeywords;
+    
+    @Column(columnDefinition = "TEXT")
+    private String refinedImagePrompt;
 
+    @Column(columnDefinition = "TEXT")
+    private String finalImagePrompt;
+    
     // ... getter/setter
 }
