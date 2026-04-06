@@ -361,11 +361,20 @@
   },
   "61": {
     "inputs": {
-      "value": "{{user_negative}}"
+      "value": "A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, holding a tiny wooden wand with a glowing tip, standing gracefully smiling alongside a tiny fairy flying beside him."
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
       "title": "NEGATIVE"
+    }
+  },
+  "62": {
+    "inputs": {
+      "value": "A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, holding a tiny wooden wand with a glowing tip, standing gracefully smiling alongside a tiny fairy flying beside him."
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "주요이야기"
     }
   }
 }

@@ -48,5 +48,8 @@ public class StoryPage {
     @Column(columnDefinition = "TEXT")
     private String finalImagePrompt;
     
+    private String imageUrl;
+    private String imagePrompt;
+   
     // ... getter/setter
 }

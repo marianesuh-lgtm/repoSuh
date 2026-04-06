@@ -389,7 +389,7 @@ const generateStory  = async () => {
     // 1. 사용자 선택 데이터 → 서버에 보낼 payload 준비
     const payload = {
       selections: cleanedData,  // { 기: {character: "...", ...}, 승: {...}, ... }
-      pageCount: 6,                  // 페이지 수 (앱에서 고정하거나 사용자 선택 가능)
+      pageCount: 8,                  // 페이지 수 (앱에서 고정하거나 사용자 선택 가능)
       format: 'paged',               // 서버에 "페이지별 구조로 반환해줘" 요청
       temperature: 0.75,             // 창의성 조절 (옵션)
       maxTokens: 1200                // 전체 토큰 제한 (옵션)
@@ -526,7 +526,7 @@ const handleTTS = () => {
   // 핵심 수정: 현재 슬라이드의 텍스트만 가져오기
   // 만약 pages가 비어있다면 기존 story.value를 백업으로 사용
   const currentText = pages.value.length > 0 
-    ? pages.value[activeIndex.value].text 
+    ? pages.value[activeIndex.value].rawText 
     : story.value.replace(/제목:.*\n/, '');
 
   if (!currentText) return;

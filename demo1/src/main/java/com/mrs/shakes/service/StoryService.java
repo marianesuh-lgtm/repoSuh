@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mrs.shakes.client.OllamaClient;
+import com.mrs.shakes.config.ShakesProperties;
 import com.mrs.shakes.domain.story.StoryMaster;
 import com.mrs.shakes.domain.story.StoryPage;
 import com.mrs.shakes.domain.story.StoryStatus;
@@ -55,12 +57,14 @@ public class StoryService {
     private final ObjectMapper objectMapper;
     private final CharacterService characterService ;
     private final IncrementalStoryService refineService;
+    private final String imgUrl = "http://myShakes.ddns.net:8080/images/characters/";
+    private final ShakesProperties properties; // 생성자 주입
     
     @JsonProperty("raw_image_keywords")
     private String rawImageKeywords;
 
 
-    public void generateStory(GenerateBookRequest request, CharacterDTO character) {
+    public StoryMaster generateStory(GenerateBookRequest request, CharacterDTO character) {
         // 1. AI 응답 받기
         //String aiResponse = ollamaService.ask(request); 
     	int pageCount = request.getPageCount();
@@ -70,7 +74,7 @@ public class StoryService {
         log.info("초안 생성 완료: master_id={}", master.getId()); 
        	
         // 2. 각 페이지별 2차 Refining 진행
-        this.refineStoryPages(master, context, character );
+        //this.refineStoryPages(master, context, character );
         
         log.info("master::: {}", master.getTotalPages());
         log.info("master::: {}", master.getTitle());
@@ -78,25 +82,11 @@ public class StoryService {
             log.info("getPhase::: {}", page.getPhase());
             log.info("getPageNumber::: {}", page.getPageNumber());
             log.info("getRawContent::: {}", page.getRawContent());
-            log.info("getRawContent::: {}", page.getRefinedContent());
+            log.info("getRefinedContent::: {}", page.getRefinedContent());
         }
      
-        // 2. 초안 생성 (데이터 가공 및 엔티티 매핑)
-    	//String systemPrompt = promptProvider.getGeneratorPrompt(character, pageCount);
-        
-        //log.info("systemPrompt::: {}", systemPrompt); 
 
-        //String responseJson = ollamaClient.generate(systemPrompt);
-
-        //log.info("responseJson::: {}", responseJson); 
-        
-        //Book storyDraft = 
-    	//Long id = this.createStoryDraft(character, pageCount);
-        
-        // 3. DB 저장
-       // Book savedBook = bookRepository.save(storyDraft);
-        
-        //return BookResponse.from(savedBook);
+        return master;
     }    
   
     @Transactional
@@ -171,7 +161,8 @@ public class StoryService {
             master.setTotalPages(pageCount);
             master.setStatus(StoryStatus.RAW_READY);
             // characterSetting 스냅샷 저장 로직 추가...
-
+            List<StoryPage> pages = new ArrayList();  
+            
             for (RawPageResponse p : rawStory.getPages()) {
                 StoryPage page = new StoryPage();
                 page.setStory(master);
@@ -179,10 +170,13 @@ public class StoryService {
                 page.setPhase(p.getPhase()); 
                 page.setRawContent(p.getContent()); 
                 page.setRawImageKeywords(p.getRaw_image_keywords());
-                master.getPages().add(page);
+                page.setImagePrompt(p.getImage_prompt());
+                pages.add(page);
             }
 
-            storyMasterRepository.save(master) ;
+            master.setPages(pages);
+            
+            //storyMasterRepository.save(master) ;
             
             return master;
             
@@ -204,11 +198,11 @@ public class StoryService {
 		String style =JsonUtils.escapeJsonValue(characterDto.getArtStyle());
 		String action ="";
 		String negative =JsonUtils.escapeJsonValue(characterDto.getNegative());
-		String image = "http://myShakes.ddns.net:8080/images/characters/"+characterDto.getUrlImg();
-		String subImage = "http://myShakes.ddns.net:8080/images/characters/"+characterDto.getSubUrlImg();
+		String image = imgUrl+characterDto.getUrlImg();
+		String subImage = imgUrl+characterDto.getSubUrlImg();
 		String story22 =JsonUtils.escapeJsonValue(item.getText());
 		
-	    String workflowJson = new String(Files.readAllBytes(Paths.get("src/main/resources/workflows/florenceWF.json")));
+	    String workflowJson = new String(Files.readAllBytes(Paths.get(properties.getComfy().getWorkflowPath())));
 	    String modifiedJson = workflowJson.replace("{{user_prompt}}"
 	    		       ,  item.getAction()   );
 //	    String modifiedJson = workflowJson.replace("{{user_prompt}}"
@@ -244,7 +238,7 @@ public class StoryService {
         //log.info("entity::: {}", entity);
 	    
 	    // restTemplate은 Bean으로 등록된 것을 사용 (Thread-safe)
-	    String response = restTemplate.postForObject("http://suh.local:8188/prompt", entity, String.class);
+	    String response = restTemplate.postForObject(properties.getComfy().getBaseUrl()+"/prompt", entity, String.class);
 
         //log.info("generateAndPollImage response::: {}", response);
 	    stopWatch.stop(); // 측정 종료
@@ -272,7 +266,7 @@ public class StoryService {
 	    
 	    while (attempts < maxAttempts) {  // 5분 타임아웃
 	        Thread.sleep(sleepMs);  // 5초 대기
-	        String history = restTemplate.getForObject("http://suh.local:8188/history/" + promptId, String.class);
+	        String history = restTemplate.getForObject(properties.getComfy().getBaseUrl()+"/history/" + promptId, String.class);
 	        //log.info("pollForImage history::: {}", history);
 	        
 	        if (history == null || history.trim().isEmpty()) {

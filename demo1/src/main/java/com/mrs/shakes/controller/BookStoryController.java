@@ -11,6 +11,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.api.OllamaApi.ChatResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.util.StopWatch;
 
@@ -28,6 +29,7 @@ import com.mrs.shakes.service.CharacterService;
 import com.mrs.shakes.service.OllamaService;
 import com.mrs.shakes.service.OllamaTestService;
 import com.mrs.shakes.util.JsonUtils;
+import com.networknt.schema.resource.ResourceLoader;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,7 +72,7 @@ public class BookStoryController {
 	private final OllamaService ollamaService  ;  
 	private final OllamaTestService ollamaTestService  ;  
     private final CharacterService characterService ;
-
+     
 	public BookStoryController(ChatClient.Builder builder, OllamaService ollamaService,OllamaTestService ollamaTestService, CharacterService characterService ) {
         this.chatClient = builder.build();
         this.ollamaService = ollamaService;
