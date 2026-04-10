@@ -38,6 +38,7 @@ import com.mrs.shakes.dto.StoryRequest;
 import com.mrs.shakes.dto.PagedStoryResponse.Page;
 import com.mrs.shakes.service.CharacterService;
 import com.mrs.shakes.service.OllamaTestService;
+import com.mrs.shakes.service.StoryGenerationService;
 import com.mrs.shakes.service.StoryService;
 import com.mrs.shakes.util.JsonUtils;
 import com.mrs.shakes.util.StoryMapper;
@@ -72,10 +73,50 @@ public class BookController {
     private ResourceLoader resourceLoader;
     
     private final StoryMapper storyMapper;
+	private final StoryGenerationService  service ;
     
 //	public BookController(ChatClient.Builder builder ) {
 //        this.chatClient = builder.build();
 //    }
+
+    
+	@PostMapping("/gen-book")
+	public ResponseEntity<?>  generateBookStory(@RequestBody GenerateBookRequest request) {
+	    log.info("동화 생성 요청 수신: {}", request);
+	    PagedStoryResponse result  ;
+
+	    // 유효성 검사 (옵션)
+	    if (request.getSelections() == null) {
+	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
+	    }
+//        String charId = request.getSelections().get기().getCharacter().getCode();
+//        String mood = request.getSelections().get기().getMood().getLabel();
+//        String weakness = request.getSelections().get전().getProblem().getLabel();
+
+        //CharacterDTO character = characterService.getCharacterMapperInfo(charId);
+//        CharacterDTO character = storyService.setCharacterDto(request);
+//        StoryMaster master = storyService.generateStory(request, character);
+        try {
+	          result = service.getGeneratePages(request);
+
+          } catch (NullPointerException e) {
+                StoryMaster master = storyService.generateStory(request );
+                 result = storyMapper.toResponse(master);
+
+                 return ResponseEntity.ok(result);
+
+          } catch (Exception ex ) {
+
+        	  log.info("ex::::{}", ex);
+        	  log.info("getCause::::{}", ex.getCause());
+       // 	if(ex. == null || result.getStoryId() == null ) {
+       //     }
+        	
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(result);
+   	}
 
 
 	@PostMapping("/generate-book")
@@ -88,74 +129,76 @@ public class BookController {
 	        //return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
 	    }
 //        String charId = request.getSelections().get기().getCharacter().getCode();
-        String mood = request.getSelections().get기().getMood().getLabel();
-        String weakness = request.getSelections().get전().getProblem().getLabel();
+       // String mood = request.getSelections().get기().getMood().getLabel();
+       // String weakness = request.getSelections().get전().getProblem().getLabel();
 
         //CharacterDTO character = characterService.getCharacterMapperInfo(charId);
-        CharacterDTO character = storyService.setCharacterDto(request);
-        StoryMaster master = storyService.generateStory(request, character);
+//        CharacterDTO character = storyService.setCharacterDto(request);
+        StoryMaster master = storyService.generateStory(request );
         
         PagedStoryResponse rslt = storyMapper.toResponse(master);
         
         
         
 	    // 여기서 LLM 호출 로직 실행
-	    try {
-
-            
-	        log.info("rslt:: {}", rslt);
-             log.info("result.getPages():: {}", rslt.getPages());
-             
-             log.info("master::: {}", rslt.getTotalPages());
-             log.info("master::: {}", rslt.getTitle());
-              
-//             List<PagedStoryResponse.Page> pageList = new ArrayList<>(rslt.getPages());
-             
-             for (PagedStoryResponse.Page page : rslt.getPages()) {
-                 log.info("getImagePrompt::: {}", page.getImagePrompt() );
-//                 log.info("getPageNumber::: {}", page.getPageNumber());
-//                 log.info("getRefinedContent::: {}", page.getRefinedContent());
-//                 //rslt.getPages().add(storyMapper.toPageResponse(page));
-//                 pageList.add(storyMapper.toPageResponse(page));
-             }
-//             rslt.setPages(pageList) ;
-             
-    	    List<Page> imageUrls = new ArrayList<>();
-    	    String workflowJson = new String(loadWorkflow());
-
-
-           // log.info("workflow::: {}", workflowJson);
-            ObjectMapper mapper = new ObjectMapper();
-
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
-            //String charId = request.getSelections().get기().getCharacter().getCode();
-
-            for (PagedStoryResponse.Page page : rslt.getPages()) {
-            	             	
-                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                    try {
-                        // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
-                        // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
-                        String imageUrl = this.generateAndPollImage(restTemplate, page , mood, character ); 
-                        page.setImageUrl(imageUrl); // 객체에 직접 세팅
-                    } catch (Exception e) {
-                        log.error("이미지 생성 실패: ", e);
-                    }
-                });
-                futures.add(future);
-            }
-
-         // 모든 페이지 생성이 끝날 때까지 대기 (최대 타임아웃 설정 권장)
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();            
-            
-        } catch (Exception e) {
-            log.error("동화 생성 실패", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(PagedStoryResponse.builder()
-                            .title("오류 발생")
-                            .pages(List.of())
-                            .build());
-        }
+//	    try {
+//
+//            
+//	        log.info("rslt:: {}", rslt);
+//             log.info("result.getPages():: {}", rslt.getPages());
+//             
+//             log.info("master::: {}", rslt.getTotalPages());
+//             log.info("master::: {}", rslt.getTitle());
+//             log.info("master::: {}", rslt.getSideCharacterAppearance());
+//                          
+////             List<PagedStoryResponse.Page> pageList = new ArrayList<>(rslt.getPages());
+//             
+//             for (PagedStoryResponse.Page page : rslt.getPages()) {
+//            	  page.setText(page.getRawText());
+//                 log.info("getImagePrompt::: {}", page.getImagePrompt() );
+////                 log.info("getPageNumber::: {}", page.getPageNumber());
+////                 log.info("getRefinedContent::: {}", page.getRefinedContent());
+////                 //rslt.getPages().add(storyMapper.toPageResponse(page));
+////                 pageList.add(storyMapper.toPageResponse(page));
+//             }
+////             rslt.setPages(pageList) ;
+//             
+//    	    List<Page> imageUrls = new ArrayList<>();
+//    	    String workflowJson = new String(loadWorkflow());
+//
+//
+//           // log.info("workflow::: {}", workflowJson);
+//            ObjectMapper mapper = new ObjectMapper();
+//
+//            List<CompletableFuture<Void>> futures = new ArrayList<>();
+//            //String charId = request.getSelections().get기().getCharacter().getCode();
+//
+//            for (PagedStoryResponse.Page page : rslt.getPages()) {
+//            	             	
+//                CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+//                    try {
+//                        // ComfyUI 호출 및 Polling 로직을 이 안으로 이동
+//                        // (주의: RestTemplate은 Thread-Safe 하므로 공유 가능)
+//                        String imageUrl = this.generateAndPollImage(restTemplate, page , mood, character ); 
+//                        page.setImageUrl(imageUrl); // 객체에 직접 세팅
+//                    } catch (Exception e) {
+//                        log.error("이미지 생성 실패: ", e);
+//                    }
+//                });
+//                futures.add(future);
+//            }
+//
+//         // 모든 페이지 생성이 끝날 때까지 대기 (최대 타임아웃 설정 권장)
+//            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();            
+//            
+//        } catch (Exception e) {
+//            log.error("동화 생성 실패", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(PagedStoryResponse.builder()
+//                            .title("오류 발생")
+//                            .pages(List.of())
+//                            .build());
+//        }
         return ResponseEntity.ok(rslt);
    	}
 	
@@ -200,7 +243,7 @@ public String generateAndPollImage(RestTemplate restTemplate, PagedStoryResponse
     mapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
     
     //log.info("prompt::: {}", promptUsed +","+story+ ", children's book illustration style, cute, vibrant colors, soft lighting");
-    //log.info("generateAndPollImage modifiedJson::: {}", modifiedJson);
+    log.info("generateAndPollImage modifiedJson::: {}", modifiedJson);
 
     // 2. ComfyUI 규격에 맞게 페이로드 생성
     Map<String, Object> workflow = mapper.readValue(modifiedJson, Map.class);

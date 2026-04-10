@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RawStoryResponse {
     private String title;
+    private String side_character_appearance;
+    private String side_character_description;
     private List<RawPageResponse> pages;
 
     @Getter @Setter @ToString

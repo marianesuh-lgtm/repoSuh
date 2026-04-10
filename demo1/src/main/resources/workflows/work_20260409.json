@@ -123,7 +123,7 @@
   },
   "25": {
     "inputs": {
-      "noise_seed": 682520884478322
+      "noise_seed": 968950643101138
     },
     "class_type": "RandomNoise",
     "_meta": {
@@ -175,7 +175,7 @@
       "model_type": "flux",
       "text_encoder1": "t5xxl_fp16.safetensors",
       "text_encoder2": "clip_l.safetensors",
-      "t5_min_length": 1024,
+      "t5_min_length": 512,
       "use_4bit_t5": "disable",
       "int4_model": "none"
     },
@@ -209,7 +209,7 @@
       "num_beams": 3,
       "do_sample": true,
       "output_mask_select": "",
-      "seed": 440772372795629,
+      "seed": 88324786682487,
       "image": [
         "58",
         0
@@ -226,7 +226,7 @@
   },
   "49": {
     "inputs": {
-      "text_0": "",
+      "text_0": "The image shows a little girl in a green dress sitting on the ground in front of a cave, surrounded by lush plants and flowers, with lamps hanging from the ceiling and a bird flying in the sky.",
       "text": [
         "48",
         2
@@ -342,7 +342,7 @@
   },
   "62": {
     "inputs": {
-      "value": ""
+      "value": "A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, holding a tiny wooden wand with a glowing tip, standing gracefully smiling alongside a tiny fairy flying beside him."
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -370,26 +370,7 @@
   },
   "64": {
     "inputs": {
-      "lora_name": "Watercolor _sdxl-000001.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "65",
-        0
-      ],
-      "clip": [
-        "65",
-        1
-      ]
-    },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "LoRA 로드"
-    }
-  },
-  "65": {
-    "inputs": {
-      "lora_name": "PencilDrawEn01-00_CE_FLUX_128AIT.safetensors",
+      "lora_name": "Crayon Sketches - Weights Model.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [

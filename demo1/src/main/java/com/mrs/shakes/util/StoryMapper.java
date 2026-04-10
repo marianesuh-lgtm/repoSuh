@@ -13,6 +13,7 @@ public interface StoryMapper {
 	@Mapping(source = "title", target = "title") // 엔티티의 id를 DTO의 storyId로 매핑
     @Mapping(source = "totalPages", target = "totalPages") // 리스트 매핑
 	@Mapping(source = "pages", target = "pages")
+	@Mapping(source = "sideCharacterAppearance", target = "sideCharacterAppearance")
     PagedStoryResponse toResponse(StoryMaster master);
 
     // 리스트 안의 각 객체(StoryPage -> PageResponse) 변환 규칙도 정의해줍니다.

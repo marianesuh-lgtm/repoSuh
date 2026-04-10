@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mrs.shakes.mapper.StoryContentMapper">
+
+<resultMap id="StoryResultMap" type="com.mrs.shakes.dto.AdminStoryDTO">
+    <id property="storyId" column="STORY_ID" />
+    <result property="title" column="TITLE" />
+    <result property="summary" column="SUMMARY" />
+    <result property="actCode" column="ACT_CODE" />
+    <result property="actDesc" column="ACT_DESC" />
+    <result property="charCode" column="CHAR_CODE" />
+    <result property="charDesc" column="CHAR_DESC" />
+    <result property="comCode" column="COM_CODE" />
+    <result property="comDesc" column="COM_DESC" />
+    <result property="eveCode" column="EVE_CODE" />
+    <result property="eveDesc" column="EVE_DESC" />
+    <result property="modCode" column="MOD_CODE" />
+    <result property="modDesc" column="MOD_DESC" />
+    <result property="plaCode" column="PLA_CODE" />
+    <result property="plaDesc" column="PLA_DESC" />
+    <result property="proCode" column="PRO_CODE" />
+    <result property="proDesc" column="PRO_DESC" />
+    <result property="solCode" column="SOL_CODE" />
+    <result property="solDesc" column="SOL_DESC" />    
+    <result property="pages" column="PAGES" 
+            typeHandler="com.mrs.shakes.handler.JsonPageListTypeHandler" />
+    <result property="createdAt" column="CREATED_AT" />
+</resultMap>
+
+<select id="getStoryCodeMaster" resultType="StoryChoiceDTO">
+	SELECT STEP_TYPE, CATEGORY, CODE, LABEL, EMOJI 
+	FROM STORY_CODE_MASTER SCM 
+	WHERE SCM.USE_YN = 'Y'
+	ORDER BY SCM.STEP_TYPE, CATEGORY, CODE 
+</select>
+
+<select id="getStoryContent" parameterType='StoryParameterDTO' resultType="com.mrs.shakes.dto.PagedStoryResponse">
+		SELECT  SC.MASTER_ID::TEXT AS STORY_ID , SM.TITLE , SC.SUMMARY , SC.IS_VERIFIED , SC.TAGS   
+		FROM STORY_CONTENT SC
+		   JOIN STORY_MASTER SM ON SC.MASTER_ID = SM.ID 
+		WHERE 1=1
+		AND   SC.CHAR_CODE = #{charCode}
+		AND   SC.PLA_CODE  = #{plaCode}
+		AND   SC.MOD_CODE  = #{modCode}
+		AND   SC.EVE_CODE  = #{eveCode}
+		AND   SC.COM_CODE  = #{comCode}
+		AND   SC.PRO_CODE  = #{proCode}
+		AND   SC.ACT_CODE  = #{actCode}
+		AND   SC.SOL_CODE  = #{solCode}
+		AND   SC.END_CODE  = #{endCode}
+		AND   SC.IS_VERIFIED = TRUE
+		ORDER BY SC.CREATED_AT DESC
+		LIMIT 1
+</select>
+
+<select id="getStoryPages" parameterType='StoryParameterDTO' resultType="com.mrs.shakes.dto.PagedStoryResponse$Page">
+		SELECT sp.story_id 
+		  ,   sp.page_number
+		  ,   sp.phase 
+		  ,   sp.image_prompt 
+		  ,   sp.image_url 
+		  ,   sp.raw_content as TEXT 
+		  ,   sp.refined_content as refinedText   
+		FROM STORY_PAGES SP
+		WHERE SP.STORY_ID = #{storyId}::BIGINT
+		order by sp.page_number asc 
+</select>
+
+<select id="getAdminStories" parameterType='StoryParameterDTO' resultMap="StoryResultMap">
+		SELECT SC.MASTER_ID::TEXT as STORY_ID , SM.TITLE , SC.SUMMARY , SC.IS_VERIFIED , SC.TAGS 
+		      , SC.act_code , ( select label from story_code_master where code = sc.act_code and use_yn = 'Y') as act_desc 
+		      , SC.char_code, ( select label from story_code_master where code = sc.char_code and use_yn = 'Y') as char_desc  
+		      , SC.com_code , ( select label from story_code_master where code = sc.com_code and use_yn = 'Y') as com_desc  
+		      , SC.eve_code , ( select label from story_code_master where code = sc.eve_code and use_yn = 'Y') as eve_desc  
+		      , SC.mod_code , ( select label from story_code_master where code = sc.mod_code and use_yn = 'Y') as mod_desc  
+		      , SC.pla_code , ( select label from story_code_master where code = sc.pla_code and use_yn = 'Y') as pla_desc  
+		      , SC.pro_code , ( select label from story_code_master where code = sc.pro_code and use_yn = 'Y') as pro_desc   
+		      , SC.sol_code , ( select label from story_code_master where code = sc.sol_code and use_yn = 'Y') as sol_desc  
+		      , SC.created_at 
+		      ,(
+		        SELECT JSON_AGG(
+		            JSON_BUILD_OBJECT(
+		                'page_no', SP.PAGE_NUMBER,
+		                'content', SP.RAW_CONTENT,
+		                'refined_text', SP.REFINED_CONTENT,
+		                'image_url', SP.IMAGE_URL,
+		                'image_prompt', SP.IMAGE_PROMPT
+		            ) ORDER BY SP.PAGE_NUMBER asc   -- 페이지 순서대로 정렬
+		        )
+		        FROM STORY_PAGES SP
+		        WHERE SP.STORY_ID = SC.MASTER_ID
+		    ) as PAGES 
+		FROM STORY_CONTENT SC 
+		JOIN STORY_MASTER SM ON SC.MASTER_ID = SM.ID 
+		WHERE 1=1 
+		AND SC.IS_VERIFIED = false 
+		ORDER BY SC.CREATED_AT DESC  
+</select>
+
+</mapper>

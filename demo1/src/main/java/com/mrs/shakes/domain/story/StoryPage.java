@@ -48,8 +48,14 @@ public class StoryPage {
     @Column(columnDefinition = "TEXT")
     private String finalImagePrompt;
     
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
+
+    @Column(columnDefinition = "TEXT")
     private String imagePrompt;
+
+    @Column(columnDefinition = "TEXT")
+    private String previousContext;
    
     // ... getter/setter
 }

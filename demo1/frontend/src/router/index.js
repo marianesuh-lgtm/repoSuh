@@ -29,6 +29,18 @@ const routes = [
     name: 'NotFound',
     component: () => import('@/views/NotFound.vue')
   }
+  ,
+  {
+    path: '/admin/stories',
+    name: 'StoryList',
+    component: () => import('../views/StoryAdminList.vue')
+  },
+  {
+    path: '/admin/stories/:id', // :id는 동적 파라미터
+    name: 'StoryDetail',
+    component: () => import('../views/StoryAdminDtl.vue'),
+    props: true // URL의 id를 컴포넌트의 props로 전달
+  }
 ]
 
 const router = createRouter({

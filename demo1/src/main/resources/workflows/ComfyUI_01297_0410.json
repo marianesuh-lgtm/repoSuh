@@ -123,7 +123,7 @@
   },
   "25": {
     "inputs": {
-      "noise_seed": 682520884478322
+      "noise_seed": 493569536541350
     },
     "class_type": "RandomNoise",
     "_meta": {
@@ -158,8 +158,8 @@
     "inputs": {
       "max_shift": 1.15,
       "base_shift": 0.5,
-      "width": 1024,
-      "height": 1024,
+      "width": 512,
+      "height": 512,
       "model": [
         "64",
         0
@@ -175,7 +175,7 @@
       "model_type": "flux",
       "text_encoder1": "t5xxl_fp16.safetensors",
       "text_encoder2": "clip_l.safetensors",
-      "t5_min_length": 1024,
+      "t5_min_length": 512,
       "use_4bit_t5": "disable",
       "int4_model": "none"
     },
@@ -209,7 +209,7 @@
       "num_beams": 3,
       "do_sample": true,
       "output_mask_select": "",
-      "seed": 440772372795629,
+      "seed": 598200383923709,
       "image": [
         "58",
         0
@@ -226,7 +226,7 @@
   },
   "49": {
     "inputs": {
-      "text_0": "",
+      "text_0": "The image shows a cute white cat with wings sitting in the middle of a forest, holding a wand in its hand. The cat is surrounded by lush green grass, vibrant flowers, tall trees, and a starry night sky.",
       "text": [
         "48",
         2
@@ -277,7 +277,7 @@
   },
   "54": {
     "inputs": {
-      "value": "{{user_prompt}}"
+      "value": "[A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, floating in the air right next to a tiny wooden wand with a glowing tip, standing gracefully], [A tiny, chubby sparrow with soft brown feathers, wearing a miniature blue crown and a small satchel. It has very expressive, large eyes as if it's about to speak.], (Soaring through a starry night sky), (Beaming smiles of joy), (Golden hour lighting), Disney Pixar style, 3d render, octane render, high detail, vibrant colors, cinematic lighting, magical, adventure, friendship"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -306,7 +306,7 @@
   },
   "58": {
     "inputs": {
-      "url": "{{user_image}}"
+      "url": "http://myShakes.ddns.net:8080/images/characters/CAT_3.png"
     },
     "class_type": "LoadImageFromURL",
     "_meta": {
@@ -333,7 +333,7 @@
   },
   "61": {
     "inputs": {
-      "value": "{{user_negative}}"
+      "value": "extra legs, five legs, mutated, deformed, disfigured, malformed limbs, long body, extra paws, floating limbs, disconnected limbs, poor anatomy"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -342,7 +342,7 @@
   },
   "62": {
     "inputs": {
-      "value": ""
+      "value": "A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, holding a tiny wooden wand with a glowing tip, standing gracefully smiling alongside a tiny fairy flying beside him."
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -351,7 +351,7 @@
   },
   "63": {
     "inputs": {
-      "lora_name": "1751021779.safetensors",
+      "lora_name": "flat childrenXX.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -370,26 +370,7 @@
   },
   "64": {
     "inputs": {
-      "lora_name": "Watercolor _sdxl-000001.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "65",
-        0
-      ],
-      "clip": [
-        "65",
-        1
-      ]
-    },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "LoRA 로드"
-    }
-  },
-  "65": {
-    "inputs": {
-      "lora_name": "PencilDrawEn01-00_CE_FLUX_128AIT.safetensors",
+      "lora_name": "Simple Watercolor-000008.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [

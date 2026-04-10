@@ -27,6 +27,16 @@ public class PromptProvider {
     /**
      * 1차 스토리 생성용 프롬프트 빌드
      */
+    public String getGeneratorPrompt333(CharacterDTO character, int pageCount) {
+        String template = loadTemplate("story-generator-v2.st");
+        
+        // 템플릿 내의 {variable} 들을 실제 값으로 치환
+        return template;
+    }
+   
+    /**
+     * 1차 스토리 생성용 프롬프트 빌드
+     */
     public String getGeneratorPrompt(CharacterDTO character, int pageCount) {
         String template = loadTemplate("story-generator-v1.st");
         
@@ -45,12 +55,16 @@ public class PromptProvider {
     /**
      * 2차 교정용(Refiner) 프롬프트 빌드
      */
-     public String getRefinerPrompt(StoryPage page, String context, CharacterDTO character) {
-        String template = loadTemplate("story-refiner-v1.st");
-        
+     public String getRefinerPrompt(StoryPage page, String context, CharacterDTO character, String sideChar) {
+        String template = loadTemplate("story-refiner-v2.st");
+ 
+     // context가 null이면 빈 문자열로 치환하거나 기본 메시지를 넣습니다.
+        String safeContext = (context == null || context.isEmpty())?  
+                             "이것은 이야기의 시작입니다. 이전 줄거리가 없습니다." : context;        
         return template
             .replace("{phase}", page.getPhase())
-            .replace("{previousContext}",  context.isEmpty() ? "이야기 시작 단계입니다." : context)
+            .replace("{previousContext}",  safeContext)
+            .replace("{side_character_description}",  sideChar)
             .replace("{content}", page.getRawContent())
             .replace("{raw_image_description}", page.getRawImageKeywords() )
             .replace("{appearance}", character.getAppearance());

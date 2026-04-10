@@ -526,7 +526,7 @@ const handleTTS = () => {
   // 핵심 수정: 현재 슬라이드의 텍스트만 가져오기
   // 만약 pages가 비어있다면 기존 story.value를 백업으로 사용
   const currentText = pages.value.length > 0 
-    ? pages.value[activeIndex.value].rawText 
+    ? pages.value[activeIndex.value].text 
     : story.value.replace(/제목:.*\n/, '');
 
   if (!currentText) return;

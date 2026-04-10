@@ -12,10 +12,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -34,6 +36,8 @@ public class StoryMaster {
 
     private String title;
 
+    private String sideCharacterAppearance;
+    
     // 캐릭터 설정을 별도 테이블 대신 JSONB로 관리하여 유연성 확보
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Object> characterSetting;
@@ -53,6 +57,9 @@ public class StoryMaster {
     private List<StoryPage> pages = new ArrayList<>();
     
     private LocalDateTime createdAt = LocalDateTime.now();
+    
+    @OneToOne(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private StoryContent content;
 
     // 진행률 업데이트 로직
     public void incrementProcessedPages() {
@@ -62,6 +69,12 @@ public class StoryMaster {
             this.finishedAt = LocalDateTime.now();
         }
     }
+    
+ // 연관관계 편의 메서드
+    public void setContent(StoryContent content) {
+        this.content = content;
+        content.setStory(this);
+    }    
 }
 
 

@@ -1,10 +1,16 @@
 package com.mrs.shakes.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.mrs.shakes.dto.GenerateBookRequest;
+import com.mrs.shakes.dto.PagedStoryResponse;
+import com.mrs.shakes.dto.StoryParameterDTO;
+import com.mrs.shakes.mapper.StoryContentMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -12,21 +18,41 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StoryGenerationService {
 
-    private final PromptCompositeService promptCompositeService;
-    private final RestTemplate restTemplate = new RestTemplate(); // 간단한 호출을 위해 사용
+    private final StoryContentMapper mapper;
 
-    public String askToOllama(String charId, String userTopic) {
-        String systemPrompt = promptCompositeService.buildOllamaSystemPrompt(charId);
-        String url = "http://suhmac.local:11434/api/generate";
+    public PagedStoryResponse getGeneratePages(GenerateBookRequest request) {
+    	
+    	StoryParameterDTO dto  = setParameter(request);
+    	PagedStoryResponse rslt = mapper.getStoryContent(dto);
+    	
+    	dto.setStoryId(rslt.getStoryId());
+        
+    	List<PagedStoryResponse.Page> rsltPages = mapper.getStoryPages(dto);
 
-        // Ollama API 요청 데이터 구성 (JSON 형태)
-        Map<String, Object> request = new HashMap<>();
-        request.put("model", "llama3"); // 사용 중인 모델명
-        request.put("prompt", systemPrompt + "\n주제: " + userTopic);
-        request.put("stream", false);
-
-        // API 호출
-        Map<String, Object> response = restTemplate.postForObject(url, request, Map.class);
-        return (String) response.get("response");
+    	rslt.setTotalPages(rsltPages.size());
+    	rslt.setPages(rsltPages);
+    	
+    	return rslt;
     }
+    
+    private StoryParameterDTO setParameter(GenerateBookRequest request) {
+    	StoryParameterDTO content = new StoryParameterDTO();
+    	
+       var selections = request.getSelections();
+        
+        // 구조에 맞게 mapping (예시)
+        content.setCharCode(selections.get기().getCharacter().getCode()); 
+        content.setPlaCode(selections.get기().getPlace().getCode());
+        content.setModCode(selections.get기().getMood().getCode());
+        content.setEveCode(selections.get승().getEvent().getCode()); 
+        content.setComCode(selections.get승().getCompanion().getCode()); 
+        content.setProCode(selections.get전().getProblem().getCode()); 
+        content.setActCode(selections.get전().getTryAction().getCode()); 
+        content.setSolCode(selections.get결().getSolution().getCode()); 
+        content.setEndCode(selections.get결().getEnding().getCode()); 
+   	
+    	
+    	return content ;
+    }
+    
 }

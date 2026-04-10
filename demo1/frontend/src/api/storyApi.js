@@ -45,7 +45,7 @@ const api = axios.create({
  */
 export const generateBook = async (payload) => {
   try {
-    const response = await api.post('/api/chat/generate-book', payload)
+    const response = await api.post('/api/chat/gen-book', payload)
     return response.data
   } catch (error) {
     console.error('동화책 생성 API 호출 실패:', error)

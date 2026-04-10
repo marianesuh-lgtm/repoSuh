@@ -79,17 +79,17 @@ public class OllamaClient {
 
 //        request.put("repeat_penalty", 1.2);// 반복 방지 강도 높임 (기본 1.1)
 //        request.put("top_p", 0.9);
-        request.put("stop", new String[]{"}"}); // JSON 종료 시 즉시 중단    
+//        request.put("stop", new String[]{"}"}); // JSON 종료 시 즉시 중단    
         request.put("format", "json");  // JSON 모드 활성화
 
-        Map<String, Object> options = new HashMap<>();
-      	options.put("num_predict", 4096); // 생성 토큰 수를 대폭 늘림 (중요!)
-      	options.put("num_ctx", 8192);    // 컨텍스트 창 크기 확보
-      	options.put("temperature", 0.7); // 창의성과 형식 준수의 균형
+//        Map<String, Object> options = new HashMap<>();
+//      	options.put("num_predict", 4096); // 생성 토큰 수를 대폭 늘림 (중요!)
+//      	options.put("num_ctx", 8192);    // 컨텍스트 창 크기 확보
+//      	options.put("temperature", 0.7); // 창의성과 형식 준수의 균형
 
-      	request.put("options", options);      	
+ //     	request.put("options", options);      	
 
-      	log.info("generate  request:: {}", request);
+      //	log.info("generate  request:: {}", request);
       	
         // POST 요청 실행
         ResponseEntity<Map> response = restTemplate.postForEntity(OLLAMA_URL, request, Map.class);
