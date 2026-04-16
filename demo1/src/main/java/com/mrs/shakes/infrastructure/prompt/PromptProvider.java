@@ -43,12 +43,12 @@ public class PromptProvider {
         // 템플릿 내의 {variable} 들을 실제 값으로 치환
         return template
             .replace("{appearance}", character.getAppearance())
-            .replace("{weakness}", character.getWeakness())
             .replace("{personality}", character.getPersonalityTraits())
             .replace("{artStyle}", character.getArtStyle())
             .replace("{negative}", character.getNegative())
             .replace("{subTitle}", character.getSubTitle())
             .replace("{subAppearance}", character.getSubAppearance())
+            .replace("{subCharacteristic}", character.getSubCharacteristic())
             .replace("{pageCount}", String.valueOf(pageCount));
     }
 

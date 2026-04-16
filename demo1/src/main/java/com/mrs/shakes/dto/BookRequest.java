@@ -13,4 +13,11 @@ public class BookRequest {
     private int age;
     private String likes;
     private String theme;
+    private String storyId;
+    private String verifyYn ;
+    private String imagePrompt ;
+    private String pageId ;
+    private String charImg ;
+    private String imageUrl ;
+    private String content ;
 }

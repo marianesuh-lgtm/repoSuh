@@ -9,7 +9,16 @@ import lombok.Setter;
 @Setter
 public class PageDTO {
     
-    @JsonProperty("page_no")
+    @JsonProperty("page_id")
+    private String pageId;
+
+    @JsonProperty("story_id")
+    private String storyId;
+
+    @JsonProperty("char_img")
+    private String charImg;
+    
+	@JsonProperty("page_no")
     private int pageNo;
 
     @JsonProperty("content")
@@ -27,8 +36,11 @@ public class PageDTO {
     // 기본 생성자 (Jackson 역직렬화에 필요)
     public PageDTO() {}
 
-    public PageDTO(int pageNo, String content, String refinedText, String imageUrl, String imagePrompt) {
+    public PageDTO( String pageId, String storyId, int pageNo, String charImg, String content, String refinedText, String imageUrl, String imagePrompt) {
+        this.pageId = pageId;
+        this.storyId = storyId;
         this.pageNo = pageNo;
+        this.charImg = charImg;
         this.content = content;
         this.refinedText = refinedText;
         this.imageUrl = imageUrl;

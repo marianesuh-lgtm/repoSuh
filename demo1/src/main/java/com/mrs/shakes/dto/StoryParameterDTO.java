@@ -22,5 +22,7 @@ public class StoryParameterDTO {
     private String solCode;
     private String endCode;
     private String storyId;
+    private boolean isVerified ;
+    private String verifyYn ;
 
 }

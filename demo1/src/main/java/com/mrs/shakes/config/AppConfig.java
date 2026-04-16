@@ -7,11 +7,26 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import io.jsonwebtoken.security.Keys;
+
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+
+import javax.crypto.SecretKey;
 
 @Configuration
 public class AppConfig {
 
+
+	@Value("${jwt.secret}") // application.yml에 정의된 비밀키 문자열
+    private String secretString;
+
+    @Bean
+    public SecretKey secretKey() {
+        // 문자열을 바탕으로 HMAC-SHA 알고리즘에 적합한 SecretKey 객체 생성
+        return Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
+    }	
+	
 	@Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder
@@ -28,4 +43,6 @@ public class AppConfig {
 				.baseUrl(baseUrl)
 				.build();
 	}
+	
+	
 }

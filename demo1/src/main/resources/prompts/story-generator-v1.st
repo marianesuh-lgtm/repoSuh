@@ -4,7 +4,7 @@
 ### [캐릭터 설정]
 - **주인공 외모/특징**: {appearance}
 - **주인공 성격**: {personality}
-- **부캐릭터 종류/설정**: {subTitle} ({subAppearance})
+- **부캐릭터 종류/설정**: {subTitle} ({subAppearance}{subCharacteristic})
 - **전체 화풍**: {artStyle}
 - **금지 요소**: {negative}
 

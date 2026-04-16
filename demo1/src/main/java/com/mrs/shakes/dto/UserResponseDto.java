@@ -1,5 +1,6 @@
 package com.mrs.shakes.dto;
 
+import com.mrs.shakes.domain.user.Role;
 import com.mrs.shakes.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class UserResponseDto {
     private String email;         // 사용자 이메일
     private String nickname;      // 닉네임 (화면 표시용)
     private String profileImage;  // 프로필 이미지 URL
-    private String role;          // 권한 (USER, ADMIN 등)
+    private Role role;          // 권한 (USER, ADMIN 등)
     private String provider;      // 인증 제공자 (KAKAO, NAVER)
     private LocalDateTime createdAt; // 가입일
 

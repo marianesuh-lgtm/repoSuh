@@ -18,7 +18,7 @@
     </select>
 
     <select id="retrieveSubCharacter" resultType="com.mrs.shakes.dto.CharacterDTO">
-		select cp.sub_id , cp.sub_title, cp.sub_appearance , cp.sub_anti_yn , cp.sub_negative , cp.sub_url_img 
+		select cp.sub_id , cp.sub_title, cp.sub_appearance , cp.sub_anti_yn , cp.sub_negative , cp.sub_url_img, cp.sub_characteristic  
 		from sub_character  cp 
 		where cp.sub_id =  #{id}
     </select>

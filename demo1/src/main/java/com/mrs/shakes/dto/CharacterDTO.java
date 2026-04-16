@@ -33,5 +33,6 @@ public class CharacterDTO {
 	private String subAntiYn;
 	private String subNegative;
 	private String subUrlImg ; 
-
+	private String subCharacteristic;
+	
 }

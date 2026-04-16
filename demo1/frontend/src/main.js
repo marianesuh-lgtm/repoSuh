@@ -1,5 +1,6 @@
 // src/main.ts
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'; // Pinia 임포트
 import App from './App.vue'
 import router from './router'          // ← 여기서 router 가져오기
 
@@ -10,6 +11,9 @@ import { register } from 'swiper/element/bundle'
 
 register()   // 이 한 줄만으로 모든 Web Component 사용 가능
 
-const app = createApp(App)
+const app = createApp(App);
+const pinia = createPinia();
+
+app.use(pinia)                        // ← 이 한 줄이 핵심! 누락되면 router undefined
 app.use(router)                        // ← 이 한 줄이 핵심! 누락되면 router undefined
 app.mount('#app')

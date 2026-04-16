@@ -1,46 +1,62 @@
 package com.mrs.shakes.config;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.mrs.shakes.security.CustomUserDetailsService;
+import com.mrs.shakes.security.JwtAuthenticationFilter;
+import com.mrs.shakes.security.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor // 1. final이 붙은 필드들을 인자로 받는 생성자를 자동 생성
+
 public class SecurityConfig {
 	
+	private final JwtTokenProvider jwtTokenProvider;
+	
 	@Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            // 1. CSRF 설정: API 서버로 사용하거나 로컬 개발 시에는 비활성화
-            .csrf(csrf -> csrf.disable())
-            
-            // 2. HTTP 요청 권한 설정
-//            .authorizeHttpRequests(auth -> auth
-//                .requestMatchers("/", "/login/**", "/oauth2/**", "/images/**").permitAll() // 인증 없이 접근 가능
-//                .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
-//            )
-//임시로 열어둠
-         // 2. 모든 요청에 대해 인증 없이 접근 허용 (임시 길 뚫기)
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() 
-            )            
-            
-            // 3. OAuth2 로그인 설정
-            .oauth2Login(oauth2 -> oauth2
-                .loginPage("/login") // 커스텀 로그인 페이지가 있다면 설정
-                .defaultSuccessUrl("/main", true) // 로그인 성공 시 이동할 페이지
-                // .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService)) // 사용자 정보 처리 서비스
-            )
-
-            // 4. 로그아웃 설정
-            .logout(logout -> logout
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-            );
-
-        return http.build();
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 	
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	    http
+	        .csrf(csrf -> csrf.disable())
+	     // 세션을 사용하지 않으므로 STATELESS 설정 (JWT의 핵심)
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))	        
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/", "/login/**", "/api/auth/**", "/api/auth/callback/**",
+	                           "/images/**", "/css/**", "/js/**", "/favicon.ico").permitAll()
+	            
+	            .requestMatchers("/api/admin/**", "/stories-mng/**").hasRole("ADMIN")
+	            .requestMatchers("/api/story/**", "/api/chat/**","/home/**", "/fairytale/**").hasAnyRole("USER", "ADMIN")
+	            
+	            .anyRequest().authenticated()
+	        )
+	        
+	        // OAuth2Login 설정은 지금 당신 상황에서는 거의 사용 안 하므로 최소화
+	        .oauth2Login(oauth2 -> oauth2.disable())   // ← disable 추천 (커스텀으로 쓰고 있으니까)
+	        
+	        .logout(logout -> logout
+	            .logoutSuccessUrl("/")
+	            .invalidateHttpSession(true)
+	        ) 
+
+	 // [핵심] UsernamePasswordAuthenticationFilter 실행 전에 JWT 필터를 먼저 실행해라!
+        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), 
+                        UsernamePasswordAuthenticationFilter.class);	    
+	    return http.build();
+	}	
 }

@@ -102,7 +102,9 @@ public class BookController {
           } catch (NullPointerException e) {
                 StoryMaster master = storyService.generateStory(request );
                  result = storyMapper.toResponse(master);
-
+                 for(PagedStoryResponse.Page page : result.getPages()) {
+                	 page.setText(page.getRawText());
+                 }
                  return ResponseEntity.ok(result);
 
           } catch (Exception ex ) {

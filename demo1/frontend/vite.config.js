@@ -25,7 +25,18 @@ export default defineConfig({
       '/view': {
         target: 'http://myshakes.ddns.net:8188',
         changeOrigin: true,
-      }
+      },
+      // ← 새로 추가: admin API proxy
+      // '/admin': {
+      //   target: 'http://myshakes.ddns.net:8080',
+      //   changeOrigin: true,
+      //   secure: false,
+      // },
+      '/api': {                     // ← 이 부분 추가
+       target: 'http://myshakes.ddns.net:8080',
+       changeOrigin: true,
+       secure: false,
+     }
     }
   },  
   resolve: {

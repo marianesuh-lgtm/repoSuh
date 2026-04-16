@@ -3,6 +3,7 @@ package com.mrs.shakes.dto;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+import com.mrs.shakes.domain.user.Role;
 import com.mrs.shakes.entity.User;
 
 import jakarta.persistence.Entity;
@@ -30,6 +31,7 @@ public class OAuthAttributes {
     private String picture;
     private String provider;
     private String providerId;
+    private Role role;
 
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
         if ("naver".equals(registrationId)) {
@@ -77,7 +79,7 @@ public class OAuthAttributes {
                 .profileImage(picture)
                 .provider(provider)
                 .providerId(providerId)
-                .role("USER") // 가입 시 기본 권한 설정
+                .role(role.USER) // 가입 시 기본 권한 설정
                 .build();
     }
 }

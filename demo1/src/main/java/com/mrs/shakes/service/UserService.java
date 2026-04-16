@@ -1,5 +1,6 @@
 package com.mrs.shakes.service;
 
+import com.mrs.shakes.domain.user.Role;
 import com.mrs.shakes.dto.UserResponseDto;
 import com.mrs.shakes.entity.User;
 import com.mrs.shakes.repository.UserRepository;
@@ -14,13 +15,15 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    //private final Role role;
 
     /**
      * 소셜 로그인 성공 시 호출되어 사용자 정보를 저장하거나 업데이트합니다.
      */
     @Transactional
     public User saveOrUpdate(String email, String nickname, String profileImage, String provider, String providerId) {
-        User user = userRepository.findByProviderId(providerId)
+    	Role defaultRole = Role.USER;
+    	User user = userRepository.findByProviderId(providerId)
                 .map(entity -> {
                     // 기존 유저라면 닉네임과 프로필 사진 업데이트 (선택 사항)
                     entity.setNickname(nickname);
@@ -33,7 +36,7 @@ public class UserService {
                         .profileImage(profileImage)
                         .provider(provider)
                         .providerId(providerId)
-                        .role("USER") // 기본 권한 설정
+                        .role(defaultRole) // 기본 권한 설정
                         .build());
 
         return userRepository.save(user);

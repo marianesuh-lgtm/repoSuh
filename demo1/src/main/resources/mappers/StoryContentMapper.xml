@@ -77,10 +77,14 @@
 		      , SC.pla_code , ( select label from story_code_master where code = sc.pla_code and use_yn = 'Y') as pla_desc  
 		      , SC.pro_code , ( select label from story_code_master where code = sc.pro_code and use_yn = 'Y') as pro_desc   
 		      , SC.sol_code , ( select label from story_code_master where code = sc.sol_code and use_yn = 'Y') as sol_desc  
+              , SC.end_code , ( select label from story_code_master where code = sc.end_code and use_yn = 'Y') as end_desc  
 		      , SC.created_at 
 		      ,(
 		        SELECT JSON_AGG(
 		            JSON_BUILD_OBJECT(
+                        'char_img', cp.url_img ,
+		                'story_id', SP.STORY_ID::TEXT,
+		                'page_id', SP.ID::TEXT,
 		                'page_no', SP.PAGE_NUMBER,
 		                'content', SP.RAW_CONTENT,
 		                'refined_text', SP.REFINED_CONTENT,
@@ -93,9 +97,35 @@
 		    ) as PAGES 
 		FROM STORY_CONTENT SC 
 		JOIN STORY_MASTER SM ON SC.MASTER_ID = SM.ID 
+		JOIN CHARACTER_PROMPT CP ON CP.CHAR_ID =  SC.CHAR_CODE 
 		WHERE 1=1 
-		AND SC.IS_VERIFIED = false 
+		<if test="isVerified == 'Y'">
+		AND SC.IS_VERIFIED =  true
+		</if>
+		<if test="isVerified == 'N'">
+		AND SC.IS_VERIFIED =  false
+		</if>
+		<if test="storyId != null and storyId != ''">
+		AND SC.MASTER_ID::TEXT = #{storyId}
+		</if>
 		ORDER BY SC.CREATED_AT DESC  
 </select>
+
+<update id="validateStoryContent" parameterType='AdminStoryDTO'>
+		UPDATE STORY_CONTENT
+		set IS_VERIFIED  = true
+        WHERE 1=1
+        AND  MASTER_ID::TEXT = #{storyId}
+</update>
+
+<update id="updateStoryPage" parameterType='AdminStoryDTO'>
+		UPDATE STORY_PAGES
+		set     IMAGE_PROMPT = COALESCE(#{imagePrompt}, IMAGE_PROMPT)
+		      , IMAGE_URL    = COALESCE(#{imageUrl}, IMAGE_URL)
+		      , RAW_CONTENT    = COALESCE(#{content}, RAW_CONTENT)
+        WHERE 1=1
+        AND  ID::TEXT = #{pageId}
+        AND  STORY_ID::TEXT = #{storyId}
+</update>
 
 </mapper>
