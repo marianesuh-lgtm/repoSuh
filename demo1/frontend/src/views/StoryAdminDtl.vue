@@ -43,7 +43,7 @@
         <h2 class="text-2xl font-bold">콘텐츠 편집</h2>
         <div class="space-x-2">
           <button @click="goBack" class="px-4 py-2 border rounded">취소</button>
-          <button @click="approve" class="px-6 py-2 bg-blue-600 text-white rounded font-bold">최종 승인</button>
+          <button @click="verifyText" class="px-6 py-2 bg-blue-600 text-white rounded font-bold">최종 승인</button>
         </div>
       </div>
       <br/>
@@ -94,6 +94,7 @@ import { useRoute } from 'vue-router';
 import { getBookById } from '@/api/storyApi'          // 예: src/api/bookApi.js
 import { setBookTextById } from '@/api/storyApi'          // 예: src/api/bookApi.js
 import { regenerateImageById } from '@/api/storyApi'          // 예: src/api/bookApi.js
+import { verifyBookStory } from '@/api/storyApi'          // 예: src/api/bookApi.js
 import { useStoryStore } from '@/stores/storyStore';
 import { storeToRefs } from 'pinia'; // 반응성을 유지하며 구조분해할 때 사용
 import axios from 'axios'; // axios 임포트 확인
@@ -193,7 +194,7 @@ const regenerateImage = async (idx) => {
 };
 
 
-const updateText = async (idx) => {
+const updateText = async () => {
       const page = storyStore.selectedStory.pages[idx];
       //console.log(`페이지 ${idx + 1} 텍스트 변경 시작... 텍스트:`, page.content);
       //console.log(`페이지정보... :`, page);
@@ -211,6 +212,18 @@ const updateText = async (idx) => {
      
 };
 
+const verifyText = async (idx) => {
+      const page = storyStore.selectedStory;
+      //console.log(`페이지 ${idx + 1} 텍스트 변경 시작... 텍스트:`, page.content);
+      console.log(`페이지정보... :`, page);
+
+      const response = await verifyBookStory(page.storyId, page);
+
+    if (response) {
+    alert('수정이 완료되었습니다!');
+    }
+     
+};
 
 
 </script>

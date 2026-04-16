@@ -62,6 +62,7 @@
 import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import {signup}  from '@/api/storyApi'
 
 const router = useRouter();
 const isLoading = ref(false);
@@ -87,7 +88,7 @@ const handleSignup = async () => {
   isLoading.value = true;
   try {
     // 백엔드 회원가입 API 주소로 변경하세요
-    await axios.post('http://myShakes.ddns.net:8080/api/auth/signup', signupData.value);
+    const response = await signup(signupData.value);
     
     alert("가입을 축하드려요! 이제 로그인해 주세요. 🎉");
     router.push('/login');
@@ -102,6 +103,8 @@ const handleSignup = async () => {
 
 <style scoped>
 .auth-container {
+  position: relative; /* z-index를 쓰기 위해 필요 */
+  z-index: 10;        /* 다른 요소보다 높은 숫자로 설정 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -109,10 +112,10 @@ const handleSignup = async () => {
 }
 
 .auth-card {
-  background: rgba(26, 35, 126, 0.9);
+  background: rgba(12, 12, 24, 0.9);
   padding: 40px;
   border-radius: 30px;
-  color: white;
+  color: rgb(242, 241, 244);
   width: 100%;
   max-width: 450px;
   box-shadow: 0 15px 35px rgba(0,0,0,0.4);

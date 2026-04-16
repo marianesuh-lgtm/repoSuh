@@ -99,10 +99,10 @@
 		JOIN STORY_MASTER SM ON SC.MASTER_ID = SM.ID 
 		JOIN CHARACTER_PROMPT CP ON CP.CHAR_ID =  SC.CHAR_CODE 
 		WHERE 1=1 
-		<if test="isVerified == 'Y'">
+		<if test='verifyYn == "Y"'>
 		AND SC.IS_VERIFIED =  true
 		</if>
-		<if test="isVerified == 'N'">
+		<if test='verifyYn == "N"'>
 		AND SC.IS_VERIFIED =  false
 		</if>
 		<if test="storyId != null and storyId != ''">

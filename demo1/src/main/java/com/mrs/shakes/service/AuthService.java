@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mrs.shakes.domain.user.Role;
+import com.mrs.shakes.dto.LoginRequest;
 import com.mrs.shakes.dto.SignupRequest;
 import com.mrs.shakes.entity.User;
 import com.mrs.shakes.repository.UserRepository;
@@ -101,6 +102,21 @@ public class AuthService {
                 .build();
 
         memberRepository.save(member);
-    }    
+    }   
+    
+    public String login(LoginRequest request) {
+        // 1. 이메일 존재 확인
+        User member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("가입되지 않은 이메일입니다."));
+
+        // 2. 비밀번호 일치 확인 (반드시 matches 메서드 사용!)
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 3. 토큰 발급 및 반환
+        return jwtTokenProvider.createToken(member);
+    }
+    
     
 }

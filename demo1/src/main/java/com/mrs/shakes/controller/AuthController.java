@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mrs.shakes.dto.LoginRequest;
+import com.mrs.shakes.dto.LoginResponse;
 import com.mrs.shakes.dto.SignupRequest;
 import com.mrs.shakes.entity.User;
 import com.mrs.shakes.repository.UserRepository;
@@ -164,4 +167,21 @@ public class AuthController {
         }
     }    
     
+ // 로그인 API 추가
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        try {
+            // 서비스에서 로그인 검증 후 토큰 생성
+            String myJwtToken = authService.login(request);
+            
+            // 토큰을 JSON 형태로 반환 (예: { "token": "ey..." })
+            return ResponseEntity.ok(new LoginResponse(myJwtToken));
+        } catch (RuntimeException e) {
+            // 아이디가 없거나 비번이 틀린 경우 401(Unauthorized) 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+
+
 }

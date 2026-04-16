@@ -31,6 +31,8 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import {loginWithEmail}  from '@/api/storyApi'
+import axios from 'axios';
 
 const router = useRouter();
 
@@ -50,10 +52,36 @@ const loginData = ref({
   password: ''
 });
 
-const handleEmailLogin = () => {
-  console.log("로그인 시도:", loginData.value.email);
-  // 로그인 로직...
+
+const handleEmailLogin = async () => {
+
+    
+  try {
+
+    const response = await loginWithEmail({
+      email: loginData.value.email,
+      password: loginData.value.password
+    });
+
+console.log("65::response::",response);
+
+    const token = response.token; // 서버에서 준 JWT
+console.log("69l::token::",token);
+    
+    // 1. 브라우저에 저장
+    localStorage.setItem('accessToken', token);
+    
+    // 2. 이후 axios 요청 시 기본 헤더로 설정
+     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    alert("환영합니다! ✨");
+    router.push('/'); // 메인 페이지로 이동
+  } catch (error) {
+    console.error("실제 에러 원인:", error);
+    alert("로그인 정보가 올바르지 않습니다.");
+  }
 };
+
 </script>
 <style scoped>
 /* 1. 상단 카드 영역 (기존 스타일 유지) */

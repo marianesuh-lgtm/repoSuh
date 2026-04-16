@@ -40,7 +40,11 @@ export const generateBook = async (payload) => {
  */
 export const getRecentBooks = async () => {
   try {
-    const response = await api.get('/api/admin/stories')   // ← proxy를 통해 호출됨
+    const response = await api.get('/api/admin/stories', {
+      params: {
+        "verifyYn": "N"
+    }
+    })   // ← proxy를 통해 호출됨
     return response.data
   } catch (error) {
     console.error('최근 동화 목록 불러오기 실패:', error)
@@ -60,6 +64,24 @@ export const getBookById = async (id) => {
     return null
   }
 }
+
+/**
+ * 특정 ID로 동화 텍스트 승인하기
+ * @param {string|number} id - 동화 ID
+ * @param {object} payload - 수정할 데이터 (예: { content: '수정된 내용' })
+ */
+export const verifyBookStory = async (id, payload) => {
+  try {
+    // api.put(url, data, config) 구조입니다.
+    // 두 번째 인자인 payload가 서버의 Request Body로 전달됩니다.
+    const response = await api.put(`/api/admin/stories/validate/${id}`, payload);
+    return response.data;
+  } catch (error) {
+    console.error('동화 텍스트 승인 실패:', error);
+    return null;
+  }
+}
+
 
 /**
  * 특정 ID로 동화 텍스트 수정하기
@@ -92,6 +114,46 @@ export const regenerateImageById = async (id, payload) => {
   } catch (error) {
     console.error('동화 이미지 수정 실패:', error);
     return null;
+  }
+}
+
+/**
+ * 동화책 회원가입
+ */
+export const signup = async (payload) => {
+  try {
+    const response = await api.post('/api/auth/signup', payload)
+    return response.data
+  } catch (error) {
+    console.error('동화책 회원가입 API 호출 실패:', error)
+    throw error;
+  }
+}
+
+/**
+ * 동화책 자녀등록
+ */
+export const childRegist = async (payload) => {
+  try {
+    const response = await api.post('/api/children/register', payload)
+    return response.data
+  } catch (error) {
+    console.error('동화책 자녀등록 API 호출 실패:', error)
+    throw error;
+  }
+}
+
+
+/**
+ * 동화책 일반로그인
+ */
+export const loginWithEmail = async (payload) => {
+  try {
+    const response = await api.post('/api/auth/login', payload)
+    return response.data
+  } catch (error) {
+    console.error('동화책 일반회원 API 호출 실패:', error)
+    throw error;
   }
 }
 

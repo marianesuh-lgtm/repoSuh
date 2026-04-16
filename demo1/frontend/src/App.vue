@@ -22,7 +22,7 @@
       />
       <span class="menu-item highlight">{{ userName }}님 ✨</span>
     </div>
-          <router-link v-if="userRole==='USER'" to="/signup" class="menu-item highlight">자녀등록</router-link>
+          <router-link v-if="userRole==='USER'" to="/children" class="menu-item highlight">자녀등록</router-link>
           <button @click="handleLogout" class="logout-btn">로그아웃</button>
         </template>
       </div>

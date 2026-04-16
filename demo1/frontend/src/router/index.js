@@ -56,7 +56,12 @@ const routes = [
   path: '/login-success',
   name: 'LoginSuccess',
   component: () => import('@/views/auth/LoginSuccess.vue')
-}
+  },
+  {
+  path: '/children',
+  name: 'ChildRegistration',
+  component: () => import('@/views/auth/ChildRegistration.vue')
+  }
 ]
 
  

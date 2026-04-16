@@ -35,6 +35,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import {childRegist} from '@/api/storyApi'
 
 const router = useRouter();
 const isLoading = ref(false);
@@ -55,9 +56,7 @@ const submitForm = async () => {
   isLoading.value = true;
   try {
     // 백엔드 API 엔드포인트에 맞게 수정하세요 (예: /api/children)
-    await axios.post('http://your-api-server.com/api/children', childData.value, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await childRegist(childData.value);
     
     alert("자녀 등록이 완료되었습니다! ✨");
     router.push('/'); // 등록 후 홈으로 이동

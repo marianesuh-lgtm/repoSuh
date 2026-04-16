@@ -85,6 +85,7 @@ public class AdminStoryController {
 	    }
 	    
 	    request.setStoryId(storyId);
+        int iRtn = service.validateAdminStory(request);
         result = service.getAdminStories(request);
         
         return ResponseEntity.ok(result);
@@ -108,8 +109,9 @@ public class AdminStoryController {
 	    request.setStoryId(storyId);
 	    request.setContent(request.getContent());
         int iRtn = service.updateAdminStory(request);
-        
-        return ResponseEntity.ok(iRtn);
+        result = service.getAdminStories(request);
+      
+        return ResponseEntity.ok(result);
    	}	
 
 	/*
@@ -137,8 +139,9 @@ public class AdminStoryController {
 	    request.setStoryId(storyId);
 	    request.setImageUrl(imageUrl);
         int iRtn = service.updateAdminStory(request);
-        
-        return ResponseEntity.ok(iRtn);
+        result = service.getAdminStories(request);
+       
+        return ResponseEntity.ok(result);
    	}	
 	
 	

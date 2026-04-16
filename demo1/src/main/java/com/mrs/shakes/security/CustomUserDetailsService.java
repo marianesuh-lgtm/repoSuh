@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.mrs.shakes.dto.CustomUserDetails;
 import com.mrs.shakes.entity.User;
 import com.mrs.shakes.repository.UserRepository;
 
@@ -15,9 +16,10 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserRepository memberRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String compositeKey) throws UsernameNotFoundException {
+   // @Override
+    public UserDetails loadUserByUsername22(String compositeKey) throws UsernameNotFoundException {
         // 1. "platform:providerId" 형식으로 들어온 문자열을 분리합니다.
         // 만약 JWT 토큰 생성 시 이 형식으로 저장했다면 여기서 파싱이 필요합니다.
         String[] parts = compositeKey.split(":");
@@ -40,4 +42,29 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .roles(user.getRole().name())
                 .build();
     }
+    
+    @Override
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        if (identifier.startsWith("LOCAL:")) {
+            // 1. 일반 로그인인 경우: 이메일로만 찾기
+            String email = identifier.substring(6); // "LOCAL:" 제외
+            User member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
+            return new CustomUserDetails(member);
+            
+        } else if (identifier.contains(":")) {
+            // 2. 소셜 로그인인 경우: provider와 providerId로 찾기
+            String[] parts = identifier.split(":");
+            String provider = parts[0];
+            String providerId = parts[1];
+            
+            User member = memberRepository.findByProviderAndProviderId(provider, providerId)
+                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+            return new CustomUserDetails(member);
+        }
+        
+        throw new UsernameNotFoundException("잘못된 인증 형식입니다.");
+    }
+    
+    
 }
