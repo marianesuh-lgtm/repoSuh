@@ -9,6 +9,7 @@ import com.mrs.shakes.dto.PageDTO;
 import com.mrs.shakes.dto.PagedStoryResponse;
 import com.mrs.shakes.dto.StoryChoiceDTO;
 import com.mrs.shakes.dto.StoryParameterDTO;
+import com.mrs.shakes.dto.StoryRequestDTO;
 
 @Mapper
 public interface StoryContentMapper {
@@ -20,5 +21,6 @@ public interface StoryContentMapper {
    List<AdminStoryDTO> getAdminStories(StoryParameterDTO dto);
    int validateStoryContent(StoryParameterDTO dto);
    int updateStoryPage(PageDTO dto);
+   List<AdminStoryDTO> getMyStories(StoryRequestDTO dto);
    
 }

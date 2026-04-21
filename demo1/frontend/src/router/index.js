@@ -61,6 +61,11 @@ const routes = [
   path: '/children',
   name: 'ChildRegistration',
   component: () => import('@/views/auth/ChildRegistration.vue')
+  },
+  {
+    path: '/my-stories',
+    name: 'MyStories',
+    component: () => import('@/views/MyStoriesView.vue') // 실제 만들 파일 경로
   }
 ]
 

@@ -22,6 +22,7 @@
       />
       <span class="menu-item highlight">{{ userName }}님 ✨</span>
     </div>
+          <router-link to="/my-stories" class="menu-item highlight">내가 만든 이야기</router-link>
           <router-link v-if="userRole==='USER'" to="/children" class="menu-item highlight">자녀등록</router-link>
           <button @click="handleLogout" class="logout-btn">로그아웃</button>
         </template>
@@ -163,9 +164,9 @@ const handleLogout = () => {
   top: 25px;
   right: 25px;
   display: flex;
-  flex-direction: row; /* 가로 방향 유지 */
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
+  gap: 8px; /* 아이템이 많아지므로 간격을 살짝 줄임 (기존 12px) */
   z-index: 10;
 }
 
@@ -194,6 +195,7 @@ const handleLogout = () => {
   border: 1px solid rgba(255, 215, 0, 0.5); /* 테두리 추가 */
   border-radius: 20px;
   margin-left: 5px;
+  white-space: nowrap;
 }
 
 .divider {

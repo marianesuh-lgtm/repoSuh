@@ -14,6 +14,7 @@ public class GenerateBookRequest {
     private String format;
     private Double temperature;
     private Integer maxTokens;
+    private String  userId;
 
     // 중첩 클래스
     @Getter

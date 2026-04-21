@@ -128,4 +128,37 @@
         AND  STORY_ID::TEXT = #{storyId}
 </update>
 
+<select id="getMyStories" parameterType='StoryRequestDTO' resultMap="StoryResultMap">
+		SELECT SC.MASTER_ID::TEXT as STORY_ID , SM.TITLE , SC.SUMMARY , SC.IS_VERIFIED , SC.TAGS 
+		      ,(
+		        SELECT JSON_AGG(
+		            JSON_BUILD_OBJECT(
+                        'char_img', cp.url_img ,
+		                'story_id', SP.STORY_ID::TEXT,
+		                'page_id', SP.ID::TEXT,
+		                'page_no', SP.PAGE_NUMBER,
+		                'content', SP.RAW_CONTENT,
+		                'refined_text', SP.REFINED_CONTENT,
+		                'image_url', SP.IMAGE_URL,
+		                'image_prompt', SP.IMAGE_PROMPT
+		            ) ORDER BY SP.PAGE_NUMBER asc   -- 페이지 순서대로 정렬
+		        )
+		        FROM STORY_PAGES SP
+		        WHERE SP.STORY_ID = SC.MASTER_ID
+		    ) as PAGES 
+		FROM STORY_CONTENT SC 
+		JOIN STORY_MASTER SM ON SC.MASTER_ID = SM.ID 
+		JOIN CHARACTER_PROMPT CP ON CP.CHAR_ID =  SC.CHAR_CODE 
+		JOIN USER_STORIES US ON SM.ID ::TEXT = US.STORY_ID 
+		WHERE 1=1 
+		AND SC.IS_VERIFIED =  true
+		<if test="storyId != null and storyId != ''">
+		AND SC.MASTER_ID::TEXT = #{storyId}
+		</if>
+		<if test="userId != null and userId != ''">
+		and us.user_id = #{userId}
+		</if>
+		ORDER BY SC.CREATED_AT DESC  
+</select>
+
 </mapper>

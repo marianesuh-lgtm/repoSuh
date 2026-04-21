@@ -44,10 +44,13 @@ import com.mrs.shakes.dto.RawStoryResponse;
 import com.mrs.shakes.dto.RawStoryResponse.RawPageResponse;
 import com.mrs.shakes.dto.RefinedStoryResponse;
 import com.mrs.shakes.dto.StoryRequest;
+import com.mrs.shakes.dto.StoryRequestDTO;
+import com.mrs.shakes.entity.UserStory;
 import com.mrs.shakes.dto.GenerateBookRequest.StorySelections;
 import com.mrs.shakes.dto.PagedStoryResponse.Page;
 import com.mrs.shakes.infrastructure.prompt.PromptProvider;
 import com.mrs.shakes.repository.StoryMasterRepository;
+import com.mrs.shakes.repository.UserStoryRepository;
 import com.mrs.shakes.util.JsonUtils;
 import com.mrs.shakes.util.ServiceUtil;
 import com.mrs.shakes.util.StoryMapper;
@@ -71,6 +74,8 @@ public class StoryService {
 //    private final String imgUrl = "http://myShakes.ddns.net:8080/images/characters/";
 	private final RestTemplate restTemplate = new RestTemplate();
 	private final ServiceUtil svcUtil;
+	private final UserStoryRepository userStoryRepository;
+	//private final StoryRequestDTO storyDto;
 
 //    private final ShakesProperties properties; // 생성자 주입
 //    @Autowired
@@ -100,7 +105,7 @@ public class StoryService {
        	
         // 2. 각 페이지별 2차 Refining 진행
         this.refineStoryPages(request, master, context, character );
-
+        
         return master;
     }    
 
@@ -311,7 +316,19 @@ public class StoryService {
         }
     }
     
-    
+    @Transactional
+    public UserStory createStory(StoryRequestDTO dto) {
+        UserStory story = UserStory.builder()
+                .userId(dto.getUserId())
+                .storyId(dto.getStoryId())
+                .title(dto.getTitle())
+                .mainCharacter(dto.getMainCharacter())
+                .selectedCodes(dto.getSelectedCodes()) // JSON 문자열로 전달 가정
+                .status("COMPLETED")
+                .build();
+
+        return userStoryRepository.save(story);
+    }    
    
     
 }

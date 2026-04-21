@@ -71,13 +71,13 @@ public class JwtTokenProvider {
         claims.put("role", user.getRole()); // 관리자 여부 확인을 위해 넣음
         claims.put("nickname", user.getNickname());
         claims.put("profileImage", user.getProfileImage());
+        claims.put("userId", user.getUserId().toString());
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
         
         return Jwts.builder()
         		.setClaims(claims)
-                //.setSubject(subject)                    // email을 subject에 저장
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(SignatureAlgorithm.HS256, key)                  // JJWT 0.12+ 방식
@@ -129,5 +129,6 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
     }
+
     
 }
