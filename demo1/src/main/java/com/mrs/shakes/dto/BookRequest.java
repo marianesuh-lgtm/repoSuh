@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class BookRequest {
 
+	private String userId;
 	private String name;
     private int age;
     private String likes;

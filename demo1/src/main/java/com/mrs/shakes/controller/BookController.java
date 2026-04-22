@@ -21,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -31,11 +33,11 @@ import org.springframework.web.client.RestTemplate;
 import com.mrs.shakes.config.ShakesProperties;
 import com.mrs.shakes.domain.story.StoryMaster;
 import com.mrs.shakes.domain.story.StoryPage;
+import com.mrs.shakes.dto.AdminStoryDTO;
 import com.mrs.shakes.dto.BookRequest;
 import com.mrs.shakes.dto.CharacterDTO;
 import com.mrs.shakes.dto.GenerateBookRequest;
 import com.mrs.shakes.dto.PagedStoryResponse;
-import com.mrs.shakes.dto.StoryRequest;
 import com.mrs.shakes.dto.StoryRequestDTO;
 import com.mrs.shakes.dto.PagedStoryResponse.Page;
 import com.mrs.shakes.security.JwtTokenProvider;
@@ -150,7 +152,70 @@ public class BookController {
         return ResponseEntity.ok(result);
    	}
 
+	@GetMapping("/myStories")
+	public ResponseEntity<?>  getMyStories(@RequestHeader("Authorization") String authHeader, BookRequest request) throws Exception {
+	    log.info("동화 생성 요청 수신: {}", request);
 
+	    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+	    	log.error("Authorization 헤더가 없거나 형식이 잘못되었습니다.");
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	     }
+	    
+
+	        String token = authHeader.substring(7);
+	        log.info("token : {}", token);
+	        Object claimValue = (String)jwtUtil.getClaim(token, "userId");
+	        String userId = String.valueOf(claimValue);
+
+	        log.info("인증된 유저 : {}", userId);
+	        request.setUserId(userId);
+	    
+	    List<AdminStoryDTO> result  ;
+
+	    // 유효성 검사 (옵션)
+	    if (request  == null) {
+	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
+	    }
+
+	    result = storyService.getMyStories(request);
+        
+        return ResponseEntity.ok(result);
+   	}	
+	
+
+	@GetMapping("/myStory/{storyId}")
+	public ResponseEntity<?>  getMyStory(@RequestHeader("Authorization") String authHeader, BookRequest request, @PathVariable("storyId") String storyId) throws Exception {
+	    log.info("동화 생성 요청 수신: {}", request);
+
+	    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+	    	log.error("Authorization 헤더가 없거나 형식이 잘못되었습니다.");
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	     }
+	    
+
+	        String token = authHeader.substring(7);
+	        log.info("token : {}", token);
+	        Object claimValue = (String)jwtUtil.getClaim(token, "userId");
+	        String userId = String.valueOf(claimValue);
+
+	        log.info("인증된 유저 : {}", userId);
+	        request.setUserId(userId);
+	        request.setStoryId(storyId);
+	    
+	    List<AdminStoryDTO> result  ;
+
+	    // 유효성 검사 (옵션)
+	    if (request  == null) {
+	        return ResponseEntity.badRequest().body(Map.of("message", "선택 데이터가 없습니다"));
+	    }
+
+	    result = storyService.getMyStories(request);
+        
+        return ResponseEntity.ok(result);
+   	}	
+	
+	
+	
 	@PostMapping("/generate-book")
 	public ResponseEntity<?>  generateStory(@RequestBody GenerateBookRequest request) {
 	    log.info("동화 생성 요청 수신: {}", request);

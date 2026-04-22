@@ -9,9 +9,9 @@
       <div v-if="stories.length > 0" class="stories-grid">
         <div 
           v-for="story in stories" 
-          :key="story.id" 
+          :key="story.storyId" 
           class="story-item"
-          @click="goToDetail(story.id)"
+          @click="goToDetail(story.storyId)"
         >
           <div class="story-icon">📖</div>
           <div class="story-info">
@@ -33,22 +33,32 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getMyStories } from '@/api/storyApi'          // 예: src/api/bookApi.js
 
 const router = useRouter()
 const stories = ref([])
 
 // 임시 데이터 (실제 구현 시 API 호출로 대체)
 const fetchStories = async () => {
-  // 예시 데이터
-  stories.value = [
-    { id: 1, title: '용감한 토끼의 모험', createdAt: '2024-03-20' },
-    { id: 2, title: '달콤한 과자 나라의 비밀', createdAt: '2024-03-18' },
-    { id: 3, title: '우주선을 탄 고양이', createdAt: '2024-03-15' },
-  ]
+ 
+    const response = await getMyStories();
+    // 2. ref 변수에 값을 넣을 때는 반드시 .value를 사용해야 합니다.
+   // console.log("response::", response);
+   stories.value = response ;
+
+    //console.log("stories::", stories);
+
+    // 예시 데이터
+//   stories.value = [
+//     { id: 1, title: '용감한 토끼의 모험', createdAt: '2024-03-20' },
+//     { id: 2, title: '달콤한 과자 나라의 비밀', createdAt: '2024-03-18' },
+//     { id: 3, title: '우주선을 탄 고양이', createdAt: '2024-03-15' },
+//   ]
 }
 
 const goToDetail = (id) => {
-  router.push(`/story/${id}`)
+    console.log("id:::",id);
+  router.push(`/my-story/${id}`);
 }
 
 onMounted(() => {

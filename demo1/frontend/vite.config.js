@@ -26,12 +26,12 @@ export default defineConfig({
         target: 'http://myshakes.ddns.net:8188',
         changeOrigin: true,
       },
-      // ← 새로 추가: admin API proxy
-      // '/admin': {
-      //   target: 'http://myshakes.ddns.net:8080',
-      //   changeOrigin: true,
-      //   secure: false,
-      // },
+// ✅ Kokoro TTS Proxy 추가
+      '/tts-api': {
+        target: 'http://myshakes.ddns.net:8880',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/tts-api/, '')
+      },
       '/api': {                     // ← 이 부분 추가
        target: 'http://myshakes.ddns.net:8080',
        changeOrigin: true,

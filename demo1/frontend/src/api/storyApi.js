@@ -157,4 +157,31 @@ export const loginWithEmail = async (payload) => {
   }
 }
 
+/**
+ * 내가 만든 동화 가져오기
+ */
+export const getMyStories = async () => {
+  try {
+    const response = await api.get(`/api/chat/myStories`)
+    return response.data
+  } catch (error) {
+    console.error('내가 만든 동화 불러오기 실패:', error)
+    return null
+  }
+}
+
+/**
+ * 내가 만든 동화 가져오기
+ */
+export const getMyStory = async (id) => {
+  try {
+    const response = await api.get(`/api/chat/myStory/${id}`)
+    return response.data
+  } catch (error) {
+    console.error('내가 만든 동화 상세 불러오기 실패:', error)
+    return null
+  }
+}
+
+
  export default api;

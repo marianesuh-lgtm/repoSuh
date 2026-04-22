@@ -36,6 +36,8 @@ import com.mrs.shakes.domain.story.StoryContent;
 import com.mrs.shakes.domain.story.StoryMaster;
 import com.mrs.shakes.domain.story.StoryPage;
 import com.mrs.shakes.domain.story.StoryStatus;
+import com.mrs.shakes.dto.AdminStoryDTO;
+import com.mrs.shakes.dto.BookRequest;
 import com.mrs.shakes.dto.BookResponse;
 import com.mrs.shakes.dto.CharacterDTO;
 import com.mrs.shakes.dto.GenerateBookRequest;
@@ -43,12 +45,13 @@ import com.mrs.shakes.dto.PagedStoryResponse;
 import com.mrs.shakes.dto.RawStoryResponse;
 import com.mrs.shakes.dto.RawStoryResponse.RawPageResponse;
 import com.mrs.shakes.dto.RefinedStoryResponse;
-import com.mrs.shakes.dto.StoryRequest;
+import com.mrs.shakes.dto.StoryParameterDTO;
 import com.mrs.shakes.dto.StoryRequestDTO;
 import com.mrs.shakes.entity.UserStory;
 import com.mrs.shakes.dto.GenerateBookRequest.StorySelections;
 import com.mrs.shakes.dto.PagedStoryResponse.Page;
 import com.mrs.shakes.infrastructure.prompt.PromptProvider;
+import com.mrs.shakes.mapper.StoryContentMapper;
 import com.mrs.shakes.repository.StoryMasterRepository;
 import com.mrs.shakes.repository.UserStoryRepository;
 import com.mrs.shakes.util.JsonUtils;
@@ -75,6 +78,7 @@ public class StoryService {
 	private final RestTemplate restTemplate = new RestTemplate();
 	private final ServiceUtil svcUtil;
 	private final UserStoryRepository userStoryRepository;
+    private final StoryContentMapper storyMapper;
 	//private final StoryRequestDTO storyDto;
 
 //    private final ShakesProperties properties; // 생성자 주입
@@ -87,6 +91,16 @@ public class StoryService {
     private String rawImageKeywords;
 
 
+    public List<AdminStoryDTO> getMyStories(BookRequest request) {
+    	StoryRequestDTO dto = new StoryRequestDTO();
+    	if(request.getStoryId() != null && ! "".equals(request.getStoryId()))
+    	dto.setStoryId(request.getStoryId());
+    	dto.setUserId(request.getUserId());
+    	//dto.setVerifyYn(request.getVerifyYn());
+        return storyMapper.getMyStories(dto);
+    }    
+    
+    
     public StoryMaster generateStory(GenerateBookRequest request) {
         // 1. AI 응답 받기
         //String aiResponse = ollamaService.ask(request); 

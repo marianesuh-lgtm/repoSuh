@@ -66,7 +66,12 @@ const routes = [
     path: '/my-stories',
     name: 'MyStories',
     component: () => import('@/views/MyStoriesView.vue') // 실제 만들 파일 경로
-  }
+  },
+  {
+    path: '/my-story/:id',
+    name: 'MyStory',
+    component: () => import('@/views/StoryDetailView.vue') // 실제 만들 파일 경로
+  } 
 ]
 
  
