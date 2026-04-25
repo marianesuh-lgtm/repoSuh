@@ -51,7 +51,7 @@ public class ServiceUtil {
     private final ObjectMapper objectMapper;
     private final CharacterService characterService ;
     private final IncrementalStoryService refineService;
-    private final String imgUrl = "https://api.myShakes.cc/images/characters/";
+    private final String imgUrl = "https://api.myshakes.cc/images/characters/";
 	private final RestTemplate restTemplate = new RestTemplate();
 
     private final ShakesProperties properties; // 생성자 주입
