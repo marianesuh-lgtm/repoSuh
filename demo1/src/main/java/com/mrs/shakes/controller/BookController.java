@@ -61,7 +61,7 @@ import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/chat")
-@CrossOrigin(origins = "http://myShakes.ddns.net:5173")
+@CrossOrigin(origins = "https://myShakes.cc:5173")
 @Slf4j
 @RequiredArgsConstructor
 //@NoArgsConstructor  
@@ -75,7 +75,7 @@ public class BookController {
 	private final OllamaTestService ollamaTestService  ; 
 	private final StoryService  storyService ;
     private final ShakesProperties properties; // 생성자 주입
-    private final String imgUrl = "http://myShakes.ddns.net:8080/images/characters/";
+    private final String imgUrl = "https://api.myShakes.cc/images/characters/";
     @Autowired
     private ResourceLoader resourceLoader;
     

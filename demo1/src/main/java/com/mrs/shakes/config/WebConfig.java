@@ -10,7 +10,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                    "http://myshakes.ddns.net",          // 기존
+                    "https://www.myshakes.cc",          // 기존
+                    "https://api.myshakes.cc",          // 기존
+                    "https://myshakes.ddns.net",          // 기존
                     "http://myshakes.ddns.net:5173",     // ← 이 줄 추가 (필수!)
                     "http://localhost:5173"              // 개발용
                 )

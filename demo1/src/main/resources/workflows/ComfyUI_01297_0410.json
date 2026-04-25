@@ -306,7 +306,7 @@
   },
   "58": {
     "inputs": {
-      "url": "http://myShakes.ddns.net:8080/images/characters/CAT_3.png"
+      "url": "https://api.myShakes.cc/images/characters/CAT_3.png"
     },
     "class_type": "LoadImageFromURL",
     "_meta": {

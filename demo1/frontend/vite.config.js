@@ -18,24 +18,30 @@ export default defineConfig({
     proxy: {
       // 아이패드가 '/comfy-api'로 요청하면 에이서 노트북으로 전달해줌
       '/comfy-api': {
-        target: 'http://myshakes.ddns.net:8188',
+        target: 'https://comfyui.myShakes.cc',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/comfy-api/, '')
       },
       '/view': {
-        target: 'http://myshakes.ddns.net:8188',
+        target: 'https://comfyui.myShakes.cc',
         changeOrigin: true,
       },
 // ✅ Kokoro TTS Proxy 추가
       '/tts-api': {
-        target: 'http://myshakes.ddns.net:8880',
+        target: 'https://tts.myShakes.cc',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/tts-api/, '')
       },
       '/api': {                     // ← 이 부분 추가
-       target: 'http://myshakes.ddns.net:8080',
+       target: 'https://api.myShakes.cc',
        changeOrigin: true,
        secure: false,
+      //  ws: true,
+      //  configure: (proxy, _options) => {
+      //     proxy.on('error', (err, _req, _res) => {
+      //       console.log('proxy error', err);
+      //     });
+      //   },
      }
     }
   },  

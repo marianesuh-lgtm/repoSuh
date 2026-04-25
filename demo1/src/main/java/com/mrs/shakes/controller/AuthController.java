@@ -88,7 +88,7 @@ public class AuthController {
 
         if (userInfo == null) {
             log.error("{} 사용자 정보를 가져오는데 실패했습니다.", platform);
-            response.sendRedirect("http://myShakes.ddns.net:5173/login-fail");
+            response.sendRedirect("https://myShakes.cc:5173/login-fail");
             return;
         }
         
@@ -152,7 +152,7 @@ public class AuthController {
 
         // 5. 프론트엔드로 토큰과 함께 리다이렉트
         // (주의: 운영 환경에서는 보안을 위해 쿠키를 쓰거나 더 안전한 방식을 사용하세요)
-        String frontendUrl = "http://myShakes.ddns.net:5173/login-success?token=" + myJwtToken;
+        String frontendUrl = "https://myShakes.cc:5173/login-success?token=" + myJwtToken;
         response.sendRedirect(frontendUrl);
     }  
 
