@@ -150,7 +150,7 @@ export const childRegist = async (payload) => {
 export const loginWithEmail = async (payload) => {
   try {
     //console.log("restApi>>", restApi);
-    const response = await restApi.post('https://api.myShakes.cc/api/auth/login', payload)
+    const response = await restApi.post('https://api.myshakes.cc/api/auth/login', payload)
     return response.data
   } catch (error) {
     console.error('동화책 일반회원 API 호출 실패:', error)

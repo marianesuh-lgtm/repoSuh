@@ -51,7 +51,7 @@ const router = useRouter();
 
 const loginWithSocial = (platform) => {
   // 실제 운영 시에는 환경 변수(VITE_API_BASE_URL)를 사용하세요.
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.myShakes.cc';
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.myshakes.cc';
   
   // 백엔드의 소셜 로그인 엔드포인트로 이동
   // 이 요청 이후 백엔드에서 카카오/네이버 로그인 페이지로 리다이렉트 시켜줍니다.

@@ -39,7 +39,7 @@ const router = useRouter();
 
 const loginWithSocial = (platform) => {
   // 실제 운영 시에는 환경 변수(VITE_API_BASE_URL)를 사용하세요.
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.myShakes.cc';
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://api.myshakes.cc';
   
   console.log(baseUrl);
   console.log(platform);

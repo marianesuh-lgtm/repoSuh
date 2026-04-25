@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 1. axios 인스턴스 생성
 const restApi = axios.create({
-  baseURL: 'https://api.myShakes.cc', // 백엔드 주소
+  baseURL: 'https://api.myshakes.cc', // 백엔드 주소
 });
 
 // 2. 요청 인터셉터 추가 (요청을 보내기 전 실행됨)
