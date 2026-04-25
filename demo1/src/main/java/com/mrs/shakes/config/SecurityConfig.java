@@ -1,5 +1,7 @@
 package com.mrs.shakes.config;
 
+import java.util.Arrays;
+
 import javax.crypto.SecretKey;
 
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 import com.mrs.shakes.security.CustomUserDetailsService;
 import com.mrs.shakes.security.JwtAuthenticationFilter;
@@ -33,30 +36,52 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http
-	        .csrf(csrf -> csrf.disable())
-	     // 세션을 사용하지 않으므로 STATELESS 설정 (JWT의 핵심)
-	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))	        
+	        // 1. CORS 설정 연결 (WebConfig 설정을 시큐리티 레벨에서도 적용)
+	        .cors(cors -> cors.configurationSource(request -> {
+	            CorsConfiguration config = new CorsConfiguration();
+	            config.setAllowedOrigins(Arrays.asList(
+	                "https://www.myshakes.cc", 
+	                "https://api.myshakes.cc",
+	                "http://localhost:5173"
+	            ));
+	            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	            config.setAllowedHeaders(Arrays.asList("*"));
+	            config.setAllowCredentials(true);
+	            config.setExposedHeaders(Arrays.asList("Authorization"));
+	            return config;
+	        }))
 
+	        // 2. CSRF 비활성화 (JWT 사용 시 필수)
+	        .csrf(csrf -> csrf.disable())
+
+	        // 3. 세션 정책 설정 (STATELESS)
+	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+	        // 4. 권한 설정
 	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/", "/login/**", "/api/auth/**", "/api/auth/callback/**",
+	            // 소셜 로그인 관련 경로는 반드시 permitAll()
+	            .requestMatchers("/", "/login/**", "/api/auth/**", "/api/auth/callback/**", "/oauth2/**",
 	                           "/images/**", "/css/**", "/js/**", "/favicon.ico").permitAll()
 	            
 	            .requestMatchers("/api/admin/**", "/stories-mng/**").hasRole("ADMIN")
-	            .requestMatchers("/api/story/**", "/api/chat/**","/home/**", "/api/children/**").hasAnyRole("USER", "ADMIN")
+	            .requestMatchers("/api/story/**", "/api/chat/**", "/home/**", "/api/children/**").hasAnyRole("USER", "ADMIN")
 	            
 	            .anyRequest().authenticated()
 	        )
-	        // OAuth2Login 설정은 지금 당신 상황에서는 거의 사용 안 하므로 최소화
-	        .oauth2Login(oauth2 -> oauth2.disable())   // ← disable 추천 (커스텀으로 쓰고 있으니까)
+
+	        // 5. OAuth2Login 비활성화 (이미 수동으로 처리 중이시므로)
+	        .oauth2Login(oauth2 -> oauth2.disable())
 	        
+	        // 6. 로그아웃 설정
 	        .logout(logout -> logout
 	            .logoutSuccessUrl("/")
 	            .invalidateHttpSession(true)
-	        ) 
+	        )
 
-	 // [핵심] UsernamePasswordAuthenticationFilter 실행 전에 JWT 필터를 먼저 실행해라!
-        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), 
-                        UsernamePasswordAuthenticationFilter.class);	    
+	        // 7. JWT 필터 순서 지정
+	        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), 
+	                        UsernamePasswordAuthenticationFilter.class);
+
 	    return http.build();
 	}	
 }

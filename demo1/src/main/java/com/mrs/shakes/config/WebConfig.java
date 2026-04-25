@@ -11,8 +11,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                     "https://www.myshakes.cc",          // 기존
+                    "https://myshakes.cc",      // 추가
                     "https://api.myshakes.cc",          // 기존
-                    "https://myshakes.ddns.net",          // 기존
+                    "http://myshakes.ddns.net",          // 기존
                     "http://myshakes.ddns.net:5173",     // ← 이 줄 추가 (필수!)
                     "http://localhost:5173"              // 개발용
                 )
