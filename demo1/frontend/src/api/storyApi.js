@@ -149,6 +149,7 @@ export const childRegist = async (payload) => {
  */
 export const loginWithEmail = async (payload) => {
   try {
+    console.log("api>>", api);
     const response = await api.post('/api/auth/login', payload)
     return response.data
   } catch (error) {

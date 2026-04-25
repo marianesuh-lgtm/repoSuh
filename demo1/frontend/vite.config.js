@@ -32,17 +32,17 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/tts-api/, '')
       },
-    //   '/api': {                     // ← 이 부분 추가
-    //    target: 'https://api.myShakes.cc',
-    //    changeOrigin: true,
-    //    secure: false,
-    //    ws: true,
-    //    configure: (proxy, _options) => {
-    //       proxy.on('error', (err, _req, _res) => {
-    //         console.log('proxy error', err);
-    //       });
-    //     },
-    //  }
+      '/api': {                     // ← 이 부분 추가
+       target: 'https://api.myShakes.cc',
+       changeOrigin: true,
+       secure: false,
+       ws: true,
+       configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('proxy error', err);
+          });
+        },
+     }
     }
   },  
   resolve: {
