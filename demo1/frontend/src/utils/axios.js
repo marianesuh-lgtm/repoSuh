@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 // 1. axios 인스턴스 생성
-const api = axios.create({
+const restApi = axios.create({
   baseURL: 'https://api.myShakes.cc', // 백엔드 주소
 });
 
 // 2. 요청 인터셉터 추가 (요청을 보내기 전 실행됨)
-api.interceptors.request.use(
+restApi.interceptors.request.use(
   (config) => {
     // 로컬 스토리지에서 토큰을 꺼냅니다.
     const token = localStorage.getItem('accessToken');
@@ -24,4 +24,4 @@ api.interceptors.request.use(
   }
 );
 
-export default api;
+export default restApi;
