@@ -27,7 +27,7 @@ restApi.interceptors.request.use((config) => {
  */
 export const generateBook = async (payload) => {
   try {
-    const response = await restApi.post('/api/chat/gen-book', payload)
+    const response = await restApi.post(import.meta.env.VITE_API_BASE_URL+'/api/chat/gen-book', payload)
     return response.data
   } catch (error) {
     console.error('동화책 생성 API 호출 실패:', error)
@@ -40,7 +40,7 @@ export const generateBook = async (payload) => {
  */
 export const getRecentBooks = async () => {
   try {
-    const response = await restApi.get('/api/admin/stories', {
+    const response = await restApi.get(import.meta.env.VITE_API_BASE_URL+'/api/admin/stories', {
       params: {
         "verifyYn": "N"
     }
@@ -57,7 +57,7 @@ export const getRecentBooks = async () => {
  */
 export const getBookById = async (id) => {
   try {
-    const response = await restApi.get(`/api/admin/stories/${id}`)
+    const response = await restApi.get(import.meta.env.VITE_API_BASE_URL+`/api/admin/stories/${id}`)
     return response.data
   } catch (error) {
     console.error('동화 상세 불러오기 실패:', error)
@@ -74,7 +74,7 @@ export const verifyBookStory = async (id, payload) => {
   try {
     // api.put(url, data, config) 구조입니다.
     // 두 번째 인자인 payload가 서버의 Request Body로 전달됩니다.
-    const response = await restApi.put(`/api/admin/stories/validate/${id}`, payload);
+    const response = await restApi.put(import.meta.env.VITE_API_BASE_URL+`/api/admin/stories/validate/${id}`, payload);
     return response.data;
   } catch (error) {
     console.error('동화 텍스트 승인 실패:', error);
@@ -92,7 +92,7 @@ export const setBookTextById = async (id, payload) => {
   try {
     // api.put(url, data, config) 구조입니다.
     // 두 번째 인자인 payload가 서버의 Request Body로 전달됩니다.
-    const response = await restApi.put(`/api/admin/stories/content/${id}`, payload);
+    const response = await restApi.put(import.meta.env.VITE_API_BASE_URL+`/api/admin/stories/content/${id}`, payload);
     return response.data;
   } catch (error) {
     console.error('동화 텍스트 수정 실패:', error);
@@ -109,7 +109,7 @@ export const regenerateImageById = async (id, payload) => {
   try {
     // api.put(url, data, config) 구조입니다.
     // 두 번째 인자인 payload가 서버의 Request Body로 전달됩니다.
-    const response = await restApi.put(`/api/admin/stories/imageUrl/${id}`, payload);
+    const response = await restApi.put(import.meta.env.VITE_API_BASE_URL+`/api/admin/stories/imageUrl/${id}`, payload);
     return response.data;
   } catch (error) {
     console.error('동화 이미지 수정 실패:', error);
@@ -122,7 +122,7 @@ export const regenerateImageById = async (id, payload) => {
  */
 export const signup = async (payload) => {
   try {
-    const response = await restApi.post('/api/auth/signup', payload)
+    const response = await restApi.post(import.meta.env.VITE_API_BASE_URL+'/api/auth/signup', payload)
     return response.data
   } catch (error) {
     console.error('동화책 회원가입 API 호출 실패:', error)
@@ -135,7 +135,7 @@ export const signup = async (payload) => {
  */
 export const childRegist = async (payload) => {
   try {
-    const response = await restApi.post('/api/children/register', payload)
+    const response = await restApi.post(import.meta.env.VITE_API_BASE_URL+'/api/children/register', payload)
     return response.data
   } catch (error) {
     console.error('동화책 자녀등록 API 호출 실패:', error)
@@ -150,7 +150,7 @@ export const childRegist = async (payload) => {
 export const loginWithEmail = async (payload) => {
   try {
     //console.log("restApi>>", restApi);
-    const response = await restApi.post('https://api.myshakes.cc/api/auth/login', payload)
+    const response = await restApi.post(import.meta.env.VITE_API_BASE_URL+'/api/auth/login', payload)
     return response.data
   } catch (error) {
     console.error('동화책 일반회원 API 호출 실패:', error)
@@ -163,7 +163,7 @@ export const loginWithEmail = async (payload) => {
  */
 export const getMyStories = async () => {
   try {
-    const response = await restApi.get(`/api/chat/myStories`)
+    const response = await restApi.get(import.meta.env.VITE_API_BASE_URL+`/api/chat/myStories`)
     return response.data
   } catch (error) {
     console.error('내가 만든 동화 불러오기 실패:', error)
@@ -176,7 +176,7 @@ export const getMyStories = async () => {
  */
 export const getMyStory = async (id) => {
   try {
-    const response = await restApi.get(`/api/chat/myStory/${id}`)
+    const response = await restApi.get(import.meta.env.VITE_API_BASE_URL+`/api/chat/myStory/${id}`)
     return response.data
   } catch (error) {
     console.error('내가 만든 동화 상세 불러오기 실패:', error)
