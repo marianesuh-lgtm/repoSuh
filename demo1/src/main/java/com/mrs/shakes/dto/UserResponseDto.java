@@ -32,7 +32,6 @@ public class UserResponseDto {
                 .userId(user.getUserId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .profileImage(user.getProfileImage())
                 .role(user.getRole())
                 .provider(user.getProvider())
                 .createdAt(user.getCreatedAt())

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import com.mrs.shakes.dto.AdminStoryDTO;
 import com.mrs.shakes.dto.BookRequest;
 import com.mrs.shakes.dto.CharacterDTO;
 import com.mrs.shakes.dto.GenerateBookRequest;
+import com.mrs.shakes.dto.PageDTO;
 import com.mrs.shakes.dto.PagedStoryResponse;
 import com.mrs.shakes.service.AdminStoryService;
 import com.mrs.shakes.service.CharacterService;
@@ -42,6 +44,9 @@ public class AdminStoryController {
 	private final AdminStoryService  service ;
 	private final RestTemplate restTemplate = new RestTemplate();
 	private final ServiceUtil svcUtil;
+//    @Value("${mrs-shakes.comfyui.base-url:http://myshakes.ddns.net:8188}")  String comfyUrl;
+    @Value("${comfyui.base-url:https://comfyui.myshakes.cc}")  
+    private String comfyUrl;
 
 	@GetMapping("/stories")
 	public ResponseEntity<?>  getAdminStories(BookRequest request) throws Exception {
@@ -54,7 +59,15 @@ public class AdminStoryController {
 	    }
 
 	    result = service.getAdminStories(request);
-        
+ 
+//	    for(AdminStoryDTO dto: result) {
+//	    	for(PageDTO page: dto.getPages()) {
+//	    		page.setImageUrl(comfyUrl+page.getImageUrl());
+//	    		log.info("page:::", page);
+//	    		log.info("page.getImageUrl:::", page.getImageUrl());
+//	    	}
+//	    }
+	    
         return ResponseEntity.ok(result);
    	}	
 
@@ -70,6 +83,16 @@ public class AdminStoryController {
 	    
 	    request.setStoryId(storyId);
         result = service.getAdminStories(request);
+
+//	    for(AdminStoryDTO dto: result) {
+//	    	for(PageDTO page: dto.getPages()) {
+//	    		log.info("comfyUrl:::", comfyUrl);
+//	    		log.info("page.getImageUrl:::", page.getImageUrl());
+//	    		page.setImageUrl(comfyUrl+page.getImageUrl());
+//	    		log.info("page:::", page);
+//	    		log.info("page.getImageUrl:::", page.getImageUrl());
+//	    	}
+//	    }
         
         return ResponseEntity.ok(result);
    	}	
@@ -87,6 +110,14 @@ public class AdminStoryController {
 	    request.setStoryId(storyId);
         int iRtn = service.validateAdminStory(request);
         result = service.getAdminStories(request);
+
+//	    for(AdminStoryDTO dto: result) {
+//	    	for(PageDTO page: dto.getPages()) {
+//	    		page.setImageUrl(comfyUrl+page.getImageUrl());
+//	    		log.info("page:::", page);
+//	    		log.info("page.getImageUrl:::", page.getImageUrl());
+//	    	}
+//	    }
         
         return ResponseEntity.ok(result);
    	}	
@@ -110,7 +141,15 @@ public class AdminStoryController {
 	    request.setContent(request.getContent());
         int iRtn = service.updateAdminStory(request);
         result = service.getAdminStories(request);
-      
+ 
+//	    for(AdminStoryDTO dto: result) {
+//	    	for(PageDTO page: dto.getPages()) {
+//	    		page.setImageUrl(comfyUrl+page.getImageUrl());
+//	    		log.info("page:::", page);
+//	    		log.info("page.getImageUrl:::", page.getImageUrl());
+//	    	}
+//	    }
+        
         return ResponseEntity.ok(result);
    	}	
 
@@ -140,7 +179,13 @@ public class AdminStoryController {
 	    request.setImageUrl(imageUrl);
         int iRtn = service.updateAdminStory(request);
         result = service.getAdminStories(request);
-       
+ 
+//	    for(AdminStoryDTO dto: result) {
+//	    	for(PageDTO page: dto.getPages()) {
+//	    		page.setImageUrl(comfyUrl+page.getImageUrl());
+//	    	}
+//	    }
+        
         return ResponseEntity.ok(result);
    	}	
 	
