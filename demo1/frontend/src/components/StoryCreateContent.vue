@@ -70,7 +70,7 @@
       <swiper-slide v-for="(page, index) in pages" :key="index">
         <div class="relative w-full h-full">
           <img
-            :src="page.imageUrl"
+            :src="`/images/${page.imageUrl}`"
             class="absolute inset-0 w-full h-full object-cover"
             alt="페이지"
           />
@@ -132,8 +132,7 @@
                 box-sizing: border-box; /* 패딩이 높이에 영향을 주지 않도록 */
                 display: block;">
       
-      <img :src="page.imageUrl" 
-           crossOrigin="anonymous"
+      <img :src="`/images/${page.imageUrl}`" 
            style="width: 100%; height: 100%; object-fit: cover; display: block;">
       
       <div style="position: absolute; bottom: 0; width: 100%; padding: 40px; background: rgba(255,255,255,0.85); text-align: center;">
