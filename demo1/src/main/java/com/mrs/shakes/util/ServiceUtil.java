@@ -189,10 +189,11 @@ public class ServiceUtil {
                         // ComfyUI /view 엔드포인트로 이미지 URL 구성
                         // 형식: http://127.0.0.1:8188/view?filename=xxx.png&subfolder=&type=output
                         //String viewUrl = "http://172.30.1.38:8188/view" +
-        	            String viewUrl = "/view" +
-                            "?filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8) +
-                            "&subfolder=" + URLEncoder.encode(subfolder, StandardCharsets.UTF_8) +
-                            "&type=" + URLEncoder.encode(type, StandardCharsets.UTF_8);
+//        	            String viewUrl = "/view" +
+//                            "?filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8) +
+//                            "&subfolder=" + URLEncoder.encode(subfolder, StandardCharsets.UTF_8) +
+//                            "&type=" + URLEncoder.encode(type, StandardCharsets.UTF_8);
+        	            String viewUrl =  URLEncoder.encode(filename, StandardCharsets.UTF_8)  ;
 
     	    	        log.info("pollForImage viewUrl::: {}", viewUrl);
                         

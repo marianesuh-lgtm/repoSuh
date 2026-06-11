@@ -135,7 +135,7 @@ public class BookController {
                  
                  for(PagedStoryResponse.Page page : result.getPages()) {
                 	 page.setText(page.getRawText());
-     	    		 page.setImageUrl(comfyUrl+page.getImageUrl());
+     	    		 page.setImageUrl(page.getImageUrl());
      	    		 log.info("page:::{}",page);
                  }
                  
@@ -256,7 +256,7 @@ public class BookController {
         
         
 	    for(Page dto: rslt.getPages()) {
-	    		dto.setImageUrl(comfyUrl+dto.getImageUrl());
+	    		dto.setImageUrl(dto.getImageUrl());
 	    }
        
 	    // 여기서 LLM 호출 로직 실행

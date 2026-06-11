@@ -65,7 +65,7 @@ public class JsonPageListTypeHandler extends BaseTypeHandler<List<PageDTO>> {
                 for (PageDTO page : pages) {
                     if (page.getImageUrl() != null && !page.getImageUrl().startsWith("http")) {
                         // DB에 저장된 값이 상대 경로(/view?...)일 경우에만 baseUrl을 붙여줍니다.
-                        page.setImageUrl(comfyUrl + page.getImageUrl());
+                        page.setImageUrl(page.getImageUrl());
                     }
                     
                  }

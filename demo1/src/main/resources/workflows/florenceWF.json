@@ -1,221 +1,41 @@
 {
-  "6": {
+  "1": {
     "inputs": {
-      "text": [
-        "56",
-        0
-      ],
-      "clip": [
-        "64",
-        1
-      ]
+      "url": "{{user_image}}"
     },
-    "class_type": "CLIPTextEncode",
+    "class_type": "LoadImageFromURL",
     "_meta": {
-      "title": "CLIP Text Encode (Positive Prompt)"
+      "title": "Load Images from URL"
     }
   },
-  "8": {
+  "2": {
     "inputs": {
-      "samples": [
-        "13",
-        0
-      ],
-      "vae": [
-        "10",
-        0
-      ]
+      "model": "microsoft/Florence-2-large",
+      "precision": "fp16",
+      "convert_to_safetensors": false
     },
-    "class_type": "VAEDecode",
+    "class_type": "DownloadAndLoadFlorence2Model",
     "_meta": {
-      "title": "VAE 디코드"
+      "title": "DownloadAndLoadFlorence2Model"
     }
   },
-  "9": {
-    "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "이미지 저장"
-    }
-  },
-  "10": {
-    "inputs": {
-      "vae_name": "ae.safetensors"
-    },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "VAE 로드"
-    }
-  },
-  "13": {
-    "inputs": {
-      "noise": [
-        "25",
-        0
-      ],
-      "guider": [
-        "22",
-        0
-      ],
-      "sampler": [
-        "16",
-        0
-      ],
-      "sigmas": [
-        "17",
-        0
-      ],
-      "latent_image": [
-        "27",
-        0
-      ]
-    },
-    "class_type": "SamplerCustomAdvanced",
-    "_meta": {
-      "title": "고급 사용자 정의 샘플러"
-    }
-  },
-  "16": {
-    "inputs": {
-      "sampler_name": "euler"
-    },
-    "class_type": "KSamplerSelect",
-    "_meta": {
-      "title": "KSampler (선택)"
-    }
-  },
-  "17": {
-    "inputs": {
-      "scheduler": "simple",
-      "steps": 8,
-      "denoise": 1,
-      "model": [
-        "30",
-        0
-      ]
-    },
-    "class_type": "BasicScheduler",
-    "_meta": {
-      "title": "기본 스케줄러"
-    }
-  },
-  "22": {
-    "inputs": {
-      "model": [
-        "30",
-        0
-      ],
-      "conditioning": [
-        "26",
-        0
-      ]
-    },
-    "class_type": "BasicGuider",
-    "_meta": {
-      "title": "기본 가이드"
-    }
-  },
-  "25": {
-    "inputs": {
-      "noise_seed": 682520884478322
-    },
-    "class_type": "RandomNoise",
-    "_meta": {
-      "title": "무작위 노이즈"
-    }
-  },
-  "26": {
-    "inputs": {
-      "guidance": 3.5,
-      "conditioning": [
-        "6",
-        0
-      ]
-    },
-    "class_type": "FluxGuidance",
-    "_meta": {
-      "title": "FLUX 가이드"
-    }
-  },
-  "27": {
-    "inputs": {
-      "width": 1024,
-      "height": 1024,
-      "batch_size": 1
-    },
-    "class_type": "EmptySD3LatentImage",
-    "_meta": {
-      "title": "빈 잠재 이미지 (SD3)"
-    }
-  },
-  "30": {
-    "inputs": {
-      "max_shift": 1.15,
-      "base_shift": 0.5,
-      "width": 1024,
-      "height": 1024,
-      "model": [
-        "64",
-        0
-      ]
-    },
-    "class_type": "ModelSamplingFlux",
-    "_meta": {
-      "title": "모델 샘플링 (FLUX)"
-    }
-  },
-  "44": {
-    "inputs": {
-      "model_type": "flux",
-      "text_encoder1": "t5xxl_fp16.safetensors",
-      "text_encoder2": "clip_l.safetensors",
-      "t5_min_length": 1024,
-      "use_4bit_t5": "disable",
-      "int4_model": "none"
-    },
-    "class_type": "NunchakuTextEncoderLoader",
-    "_meta": {
-      "title": "Nunchaku Text Encoder Loader (Deprecated)"
-    }
-  },
-  "45": {
-    "inputs": {
-      "model_path": "svdq-fp4_r32-flux.1-krea-dev.safetensors",
-      "cache_threshold": 0,
-      "attention": "nunchaku-fp16",
-      "cpu_offload": "auto",
-      "device_id": 0,
-      "data_type": "bfloat16",
-      "i2f_mode": "enabled"
-    },
-    "class_type": "NunchakuFluxDiTLoader",
-    "_meta": {
-      "title": "Nunchaku FLUX DiT Loader"
-    }
-  },
-  "48": {
+  "3": {
     "inputs": {
       "text_input": "",
       "task": "detailed_caption",
-      "fill_mask": true,
+      "fill_mask": "",
       "keep_model_loaded": false,
       "max_new_tokens": 1024,
       "num_beams": 3,
       "do_sample": true,
       "output_mask_select": "",
-      "seed": 440772372795629,
+      "seed": 635143324868481,
       "image": [
-        "58",
+        "1",
         0
       ],
       "florence2_model": [
-        "50",
+        "2",
         0
       ]
     },
@@ -224,49 +44,109 @@
       "title": "Florence2Run"
     }
   },
-  "49": {
+  "5": {
     "inputs": {
-      "text_0": "",
-      "text": [
-        "48",
-        2
+      "unet_name": "flux1-schnell-Q4_K_M.gguf"
+    },
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {
+      "title": "Unet Loader (GGUF)"
+    }
+  },
+  "6": {
+    "inputs": {
+      "clip_name": "t5xxl-encoder-q4_k_m.gguf",
+      "type": "flux2"
+    },
+    "class_type": "CLIPLoaderGGUF",
+    "_meta": {
+      "title": "CLIPLoader (GGUF)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "VAE 로드"
+    }
+  },
+  "9": {
+    "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "빈 잠재 이미지"
+    }
+  },
+  "10": {
+    "inputs": {
+      "seed": 15432678912345,
+      "steps": 4,
+      "cfg": 1,
+      "sampler_name": "euler",
+      "scheduler": "sgm_uniform",
+      "denoise": 1,
+      "model": [
+        "18",
+        0
+      ],
+      "positive": [
+        "14",
+        0
+      ],
+      "negative": [
+        "15",
+        0
+      ],
+      "latent_image": [
+        "9",
+        0
       ]
     },
-    "class_type": "ShowText|pysssss",
+    "class_type": "KSampler",
     "_meta": {
-      "title": "Show Text 🐍"
+      "title": "KSampler"
     }
   },
-  "50": {
+  "11": {
     "inputs": {
-      "model": "microsoft/Florence-2-base",
-      "precision": "fp16",
-      "attention": "sdpa",
-      "convert_to_safetensors": false
+      "samples": [
+        "10",
+        0
+      ],
+      "vae": [
+        "8",
+        0
+      ]
     },
-    "class_type": "DownloadAndLoadFlorence2Model",
+    "class_type": "VAEDecode",
     "_meta": {
-      "title": "DownloadAndLoadFlorence2Model"
+      "title": "VAE 디코드"
     }
   },
-  "53": {
+  "13": {
     "inputs": {
       "delimiter": ", ",
       "clean_whitespace": "true",
       "text_a": [
-        "54",
+        "17",
         0
       ],
       "text_b": [
-        "48",
+        "3",
         2
       ],
       "text_c": [
-        "59",
+        "24",
         0
       ],
       "text_d": [
-        "60",
+        "25",
         0
       ]
     },
@@ -275,7 +155,52 @@
       "title": "Text Concatenate"
     }
   },
-  "54": {
+  "14": {
+    "inputs": {
+      "text": [
+        "22",
+        0
+      ],
+      "clip": [
+        "18",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "positive 텍스트 인코딩"
+    }
+  },
+  "15": {
+    "inputs": {
+      "text": [
+        "22",
+        1
+      ],
+      "clip": [
+        "18",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "negative 텍스트 인코딩"
+    }
+  },
+  "16": {
+    "inputs": {
+      "text_0": "The image shows a white cat with wings sitting in the middle of a forest, holding a wand in its hand. The cat is surrounded by lush green grass, vibrant flowers, and tall trees, with stars twinkling in the night sky above.",
+      "text": [
+        "3",
+        2
+      ]
+    },
+    "class_type": "ShowText|pysssss",
+    "_meta": {
+      "title": "Show Text 🐍"
+    }
+  },
+  "17": {
     "inputs": {
       "value": "{{user_prompt}}"
     },
@@ -284,14 +209,93 @@
       "title": "주요이야기"
     }
   },
-  "56": {
+  "18": {
+    "inputs": {
+      "lora_name": "Sketching V3_E10.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "20",
+        0
+      ],
+      "clip": [
+        "20",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
+    }
+  },
+  "20": {
+    "inputs": {
+      "lora_name": "Childish01_CE_ZIMG_AIT4k.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "prompt": "",
+      "example": "[none]",
+      "model": [
+        "5",
+        0
+      ],
+      "clip": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "LoraLoader|pysssss",
+    "_meta": {
+      "title": "Lora Loader 🐍"
+    }
+  },
+  "21": {
+    "inputs": {
+      "filename": "%time_%basemodelname_%seed",
+      "path": "",
+      "extension": "jpg",
+      "steps": 20,
+      "cfg": 7,
+      "modelname": "",
+      "sampler_name": "",
+      "scheduler_name": "normal",
+      "positive": "unknown",
+      "negative": "unknown",
+      "seed_value": 0,
+      "width": 512,
+      "height": 512,
+      "lossless_webp": false,
+      "quality_jpeg_or_webp": 100,
+      "optimize_png": false,
+      "counter": 0,
+      "denoise": 1,
+      "clip_skip": 0,
+      "time_format": "%Y-%m-%d-%H%M%S",
+      "save_workflow_as_json": false,
+      "embed_workflow": true,
+      "additional_hashes": "",
+      "download_civitai_data": true,
+      "easy_remix": true,
+      "show_preview": true,
+      "custom": "",
+      "images": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "Image Saver",
+    "_meta": {
+      "title": "Image Saver"
+    }
+  },
+  "22": {
     "inputs": {
       "text_positive": [
-        "53",
+        "13",
         0
       ],
       "text_negative": [
-        "61",
+        "23",
         0
       ],
       "style": "artstyle-watercolor",
@@ -304,16 +308,16 @@
       "title": "SDXL Prompt Styler"
     }
   },
-  "58": {
+  "23": {
     "inputs": {
-      "url": "{{user_image}}"
+      "value": "{user_negative}}"
     },
-    "class_type": "LoadImageFromURL",
+    "class_type": "PrimitiveStringMultiline",
     "_meta": {
-      "title": "메인캐릭터이미지URL"
+      "title": "negative text"
     }
   },
-  "59": {
+  "24": {
     "inputs": {
       "value": "{{user_background}}"
     },
@@ -322,88 +326,13 @@
       "title": "배경"
     }
   },
-  "60": {
+  "25": {
     "inputs": {
       "value": "{{user_mood}}"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
       "title": "분위기"
-    }
-  },
-  "61": {
-    "inputs": {
-      "value": "{{user_negative}}"
-    },
-    "class_type": "PrimitiveStringMultiline",
-    "_meta": {
-      "title": "NEGATIVE"
-    }
-  },
-  "62": {
-    "inputs": {
-      "value": ""
-    },
-    "class_type": "PrimitiveStringMultiline",
-    "_meta": {
-      "title": "주요이야기"
-    }
-  },
-  "63": {
-    "inputs": {
-      "lora_name": "1751021779.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "45",
-        0
-      ],
-      "clip": [
-        "44",
-        0
-      ]
-    },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "LoRA 로드"
-    }
-  },
-  "64": {
-    "inputs": {
-      "lora_name": "Watercolor _sdxl-000001.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "65",
-        0
-      ],
-      "clip": [
-        "65",
-        1
-      ]
-    },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "LoRA 로드"
-    }
-  },
-  "65": {
-    "inputs": {
-      "lora_name": "PencilDrawEn01-00_CE_FLUX_128AIT.safetensors",
-      "strength_model": 1,
-      "strength_clip": 1,
-      "model": [
-        "63",
-        0
-      ],
-      "clip": [
-        "63",
-        1
-      ]
-    },
-    "class_type": "LoraLoader",
-    "_meta": {
-      "title": "LoRA 로드"
     }
   }
 }
