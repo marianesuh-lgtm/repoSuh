@@ -23,7 +23,7 @@
         >
           <swiper-slide v-for="(page, index) in pages" :key="index">
             <div class="slide-content">
-              <img :src="`/images/${page.image_url}`"  class="page-image" alt="story-page" />
+              <img :src="`https://api.myshakes.cc/images/${page.image_url}`"  class="page-image" alt="story-page" />
               
 <div class="text-overlay">
   <p class="story-text">
@@ -58,7 +58,7 @@
     <div style="position: absolute; left: -9999px; top: 0;">
       <div id="pdf-content" v-if="pages.length > 0" style="width: 210mm; background: white;">
         <div v-for="(page, index) in pages" :key="index" class="pdf-page">
-          <img :src="`/images/${page.image_url}`"  crossOrigin="anonymous" style="width: 100%; height: 100%; object-fit: cover;">
+          <img :src="`https://api.myshakes.cc/images/${page.image_url}`"  crossOrigin="anonymous" style="width: 100%; height: 100%; object-fit: cover;">
           <div class="pdf-text-box">
             <p class="pdf-text">{{ page.content }}</p>
           </div>
