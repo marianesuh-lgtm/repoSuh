@@ -14,8 +14,8 @@ public class RestConfig {
 	@Bean
     public RestTemplate restTemplate() {
         return new RestTemplateBuilder()
-                .setConnectTimeout(Duration.ofSeconds(10))
-                .setReadTimeout(Duration.ofMinutes(3)) // AI 생성 시간을 고려해 넉넉히
+                .setConnectTimeout(Duration.ofSeconds(120))
+                .setReadTimeout(Duration.ofMinutes(5)) // AI 생성 시간을 고려해 넉넉히
                 .build();
     }
 }
