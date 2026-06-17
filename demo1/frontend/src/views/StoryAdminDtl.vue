@@ -53,7 +53,7 @@
         <div class="flex gap-8">
           <div class="w-1/2">
             <div class="relative group">
-              <img :src="page.image_url" class="w-full aspect-video object-cover rounded-xl border" />
+              <img :src="`https://api.myshakes.cc/images/${page.image_url}`" class="w-full aspect-video object-cover rounded-xl border" />
               <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-xl">
                 <button @click="regenerateImage(idx)" class="bg-white text-black px-4 py-2 rounded-full font-bold shadow-lg">
                   🔄 이미지 재생성
