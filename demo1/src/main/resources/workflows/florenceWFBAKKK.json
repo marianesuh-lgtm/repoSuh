@@ -31,19 +31,6 @@
       "title": "VAE 디코드"
     }
   },
-  "9": {
-    "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "이미지 저장"
-    }
-  },
   "10": {
     "inputs": {
       "vae_name": "ae.safetensors"
@@ -123,7 +110,7 @@
   },
   "25": {
     "inputs": {
-      "noise_seed": 493569536541350
+      "noise_seed": 98280763777013
     },
     "class_type": "RandomNoise",
     "_meta": {
@@ -158,8 +145,8 @@
     "inputs": {
       "max_shift": 1.15,
       "base_shift": 0.5,
-      "width": 512,
-      "height": 512,
+      "width": 1024,
+      "height": 1024,
       "model": [
         "64",
         0
@@ -168,35 +155,6 @@
     "class_type": "ModelSamplingFlux",
     "_meta": {
       "title": "모델 샘플링 (FLUX)"
-    }
-  },
-  "44": {
-    "inputs": {
-      "model_type": "flux",
-      "text_encoder1": "t5xxl_fp16.safetensors",
-      "text_encoder2": "clip_l.safetensors",
-      "t5_min_length": 512,
-      "use_4bit_t5": "disable",
-      "int4_model": "none"
-    },
-    "class_type": "NunchakuTextEncoderLoader",
-    "_meta": {
-      "title": "Nunchaku Text Encoder Loader (Deprecated)"
-    }
-  },
-  "45": {
-    "inputs": {
-      "model_path": "svdq-fp4_r32-flux.1-krea-dev.safetensors",
-      "cache_threshold": 0,
-      "attention": "nunchaku-fp16",
-      "cpu_offload": "auto",
-      "device_id": 0,
-      "data_type": "bfloat16",
-      "i2f_mode": "enabled"
-    },
-    "class_type": "NunchakuFluxDiTLoader",
-    "_meta": {
-      "title": "Nunchaku FLUX DiT Loader"
     }
   },
   "48": {
@@ -209,9 +167,9 @@
       "num_beams": 3,
       "do_sample": true,
       "output_mask_select": "",
-      "seed": 598200383923709,
+      "seed": 944532974572429,
       "image": [
-        "58",
+        "66",
         0
       ],
       "florence2_model": [
@@ -226,7 +184,7 @@
   },
   "49": {
     "inputs": {
-      "text_0": "The image shows a cute white cat with wings sitting in the middle of a forest, holding a wand in its hand. The cat is surrounded by lush green grass, vibrant flowers, tall trees, and a starry night sky.",
+      "text_0": "The image shows a cartoon cat sitting in the middle of a forest, reading a book. The cat is surrounded by trees, flowers, and plants, and there is a lantern hanging from one of the trees. The image is animated, giving it a lively and vibrant feel.",
       "text": [
         "48",
         2
@@ -241,7 +199,6 @@
     "inputs": {
       "model": "microsoft/Florence-2-base",
       "precision": "fp16",
-      "attention": "sdpa",
       "convert_to_safetensors": false
     },
     "class_type": "DownloadAndLoadFlorence2Model",
@@ -277,7 +234,7 @@
   },
   "54": {
     "inputs": {
-      "value": "[A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, floating in the air right next to a tiny wooden wand with a glowing tip, standing gracefully], [A tiny, chubby sparrow with soft brown feathers, wearing a miniature blue crown and a small satchel. It has very expressive, large eyes as if it's about to speak.], (Soaring through a starry night sky), (Beaming smiles of joy), (Golden hour lighting), Disney Pixar style, 3d render, octane render, high detail, vibrant colors, cinematic lighting, magical, adventure, friendship"
+      "value": "{{user_prompt}}"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -304,15 +261,6 @@
       "title": "SDXL Prompt Styler"
     }
   },
-  "58": {
-    "inputs": {
-      "url": "https://apiServer.myShakes.cc/images/characters/CAT_3.png"
-    },
-    "class_type": "LoadImageFromURL",
-    "_meta": {
-      "title": "메인캐릭터이미지URL"
-    }
-  },
   "59": {
     "inputs": {
       "value": "{{user_background}}"
@@ -333,7 +281,7 @@
   },
   "61": {
     "inputs": {
-      "value": "extra legs, five legs, mutated, deformed, disfigured, malformed limbs, long body, extra paws, floating limbs, disconnected limbs, poor anatomy"
+      "value": "{{user_negative}}"
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -342,7 +290,7 @@
   },
   "62": {
     "inputs": {
-      "value": "A sleek white cat wearing a pointy deep-pink wizard hat with gold stars, glowing amber eyes like galaxies, a silver bell collar, holding a tiny wooden wand with a glowing tip, standing gracefully smiling alongside a tiny fairy flying beside him."
+      "value": ""
     },
     "class_type": "PrimitiveStringMultiline",
     "_meta": {
@@ -351,15 +299,15 @@
   },
   "63": {
     "inputs": {
-      "lora_name": "flat childrenXX.safetensors",
+      "lora_name": "autumn_storybook_flux_v1.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
-        "45",
+        "67",
         0
       ],
       "clip": [
-        "44",
+        "68",
         0
       ]
     },
@@ -370,7 +318,26 @@
   },
   "64": {
     "inputs": {
-      "lora_name": "Simple Watercolor-000008.safetensors",
+      "lora_name": "illustration003.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "65",
+        0
+      ],
+      "clip": [
+        "65",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
+    }
+  },
+  "65": {
+    "inputs": {
+      "lora_name": "Childish01_CE_ZIMG_AIT4k.safetensors",
       "strength_model": 1,
       "strength_clip": 1,
       "model": [
@@ -385,6 +352,73 @@
     "class_type": "LoraLoader",
     "_meta": {
       "title": "LoRA 로드"
+    }
+  },
+  "66": {
+    "inputs": {
+      "url_or_path": "{{user_image}}"
+    },
+    "class_type": "LoadImageFromUrlOrPath",
+    "_meta": {
+      "title": "LoadImageFromUrlOrPath"
+    }
+  },
+  "67": {
+    "inputs": {
+      "unet_name": "flux1-schnell-Q4_K_M.gguf"
+    },
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {
+      "title": "Unet Loader (GGUF)"
+    }
+  },
+  "68": {
+    "inputs": {
+      "clip_name": "t5xxl-encoder-q4_k_m.gguf",
+      "type": "flux2"
+    },
+    "class_type": "CLIPLoaderGGUF",
+    "_meta": {
+      "title": "CLIPLoader (GGUF)"
+    }
+  },
+  "69": {
+    "inputs": {
+      "filename": "%time_%basemodelname_%seed",
+      "path": "",
+      "extension": "jpg",
+      "steps": 20,
+      "cfg": 7,
+      "modelname": "",
+      "sampler_name": "",
+      "scheduler_name": "normal",
+      "positive": "unknown",
+      "negative": "unknown",
+      "seed_value": 0,
+      "width": 512,
+      "height": 512,
+      "lossless_webp": true,
+      "quality_jpeg_or_webp": 100,
+      "optimize_png": false,
+      "counter": 0,
+      "denoise": 1,
+      "clip_skip": 0,
+      "time_format": "%Y-%m-%d-%H%M%S",
+      "save_workflow_as_json": false,
+      "embed_workflow": true,
+      "additional_hashes": "",
+      "download_civitai_data": true,
+      "easy_remix": true,
+      "show_preview": true,
+      "custom": "",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "Image Saver",
+    "_meta": {
+      "title": "Image Saver"
     }
   }
 }

@@ -1,27 +1,50 @@
 {
+  "6": {
+    "inputs": {
+      "text": [
+        "56",
+        0
+      ],
+      "clip": [
+        "64",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "13",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE 디코드"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "이미지 저장"
+    }
+  },
   "10": {
-    "inputs": {
-      "unet_name": "flux1-dev-fp8.safetensors",
-      "weight_dtype": "fp8_e4m3fn"
-    },
-    "class_type": "UNETLoader",
-    "_meta": {
-      "title": "확산 모델 로드"
-    }
-  },
-  "11": {
-    "inputs": {
-      "clip_name1": "clip_l.safetensors",
-      "clip_name2": "t5xxl_fp8_e4m3fn.safetensors",
-      "type": "flux",
-      "device": "default"
-    },
-    "class_type": "DualCLIPLoader",
-    "_meta": {
-      "title": "이중 CLIP 로드"
-    }
-  },
-  "12": {
     "inputs": {
       "vae_name": "ae.safetensors"
     },
@@ -32,125 +55,167 @@
   },
   "13": {
     "inputs": {
-      "width": 768,
-      "height": 768,
-      "batch_size": 1
+      "noise": [
+        "25",
+        0
+      ],
+      "guider": [
+        "22",
+        0
+      ],
+      "sampler": [
+        "16",
+        0
+      ],
+      "sigmas": [
+        "17",
+        0
+      ],
+      "latent_image": [
+        "27",
+        0
+      ]
     },
-    "class_type": "EmptyLatentImage",
+    "class_type": "SamplerCustomAdvanced",
     "_meta": {
-      "title": "빈 잠재 이미지"
+      "title": "고급 사용자 정의 샘플러"
+    }
+  },
+  "16": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSampler (선택)"
     }
   },
   "17": {
     "inputs": {
-      "clip_l": [
-        "33",
-        0
-      ],
-      "t5xxl": [
-        "27",
-        2
-      ],
-      "guidance": 4,
-      "clip": [
-        "11",
-        0
-      ]
-    },
-    "class_type": "CLIPTextEncodeFlux",
-    "_meta": {
-      "title": "CLIP 텍스트 인코딩 (FLUX)"
-    }
-  },
-  "21": {
-    "inputs": {
-      "seed": 902699277053049,
-      "steps": 10,
-      "cfg": 1,
-      "sampler_name": "euler",
-      "scheduler": "normal",
+      "scheduler": "simple",
+      "steps": 8,
       "denoise": 1,
       "model": [
-        "10",
-        0
-      ],
-      "positive": [
-        "17",
-        0
-      ],
-      "negative": [
-        "24",
-        0
-      ],
-      "latent_image": [
-        "13",
+        "30",
         0
       ]
     },
-    "class_type": "KSampler",
+    "class_type": "BasicScheduler",
     "_meta": {
-      "title": "KSampler"
+      "title": "기본 스케줄러"
     }
   },
   "22": {
     "inputs": {
-      "filename_prefix": "ComfyUI",
-      "images": [
-        "23",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "이미지 저장"
-    }
-  },
-  "23": {
-    "inputs": {
-      "samples": [
-        "21",
+      "model": [
+        "30",
         0
       ],
-      "vae": [
-        "12",
+      "conditioning": [
+        "26",
         0
       ]
     },
-    "class_type": "VAEDecode",
+    "class_type": "BasicGuider",
     "_meta": {
-      "title": "VAE 디코드"
+      "title": "기본 가이드"
     }
   },
-  "24": {
+  "25": {
     "inputs": {
-      "text": "",
-      "clip": [
-        "11",
+      "noise_seed": 682520884478322
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "무작위 노이즈"
+    }
+  },
+  "26": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "6",
         0
       ]
     },
-    "class_type": "CLIPTextEncode",
+    "class_type": "FluxGuidance",
     "_meta": {
-      "title": "CLIP 텍스트 인코딩 (프롬프트)"
+      "title": "FLUX 가이드"
     }
   },
   "27": {
     "inputs": {
+      "width": 1024,
+      "height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "EmptySD3LatentImage",
+    "_meta": {
+      "title": "빈 잠재 이미지 (SD3)"
+    }
+  },
+  "30": {
+    "inputs": {
+      "max_shift": 1.15,
+      "base_shift": 0.5,
+      "width": 1024,
+      "height": 1024,
+      "model": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "모델 샘플링 (FLUX)"
+    }
+  },
+  "44": {
+    "inputs": {
+      "model_type": "flux",
+      "text_encoder1": "t5xxl_fp16.safetensors",
+      "text_encoder2": "clip_l.safetensors",
+      "t5_min_length": 1024,
+      "use_4bit_t5": "disable",
+      "int4_model": "none"
+    },
+    "class_type": "NunchakuTextEncoderLoader",
+    "_meta": {
+      "title": "Nunchaku Text Encoder Loader (Deprecated)"
+    }
+  },
+  "45": {
+    "inputs": {
+      "model_path": "svdq-fp4_r32-flux.1-krea-dev.safetensors",
+      "cache_threshold": 0,
+      "attention": "nunchaku-fp16",
+      "cpu_offload": "auto",
+      "device_id": 0,
+      "data_type": "bfloat16",
+      "i2f_mode": "enabled"
+    },
+    "class_type": "NunchakuFluxDiTLoader",
+    "_meta": {
+      "title": "Nunchaku FLUX DiT Loader"
+    }
+  },
+  "48": {
+    "inputs": {
       "text_input": "",
-      "task": "more_detailed_caption",
+      "task": "detailed_caption",
       "fill_mask": true,
       "keep_model_loaded": false,
-      "max_new_tokens": 3000,
+      "max_new_tokens": 1024,
       "num_beams": 3,
       "do_sample": true,
       "output_mask_select": "",
-      "seed": 446490348012002,
+      "seed": 440772372795629,
       "image": [
-        "35",
+        "58",
         0
       ],
       "florence2_model": [
-        "29",
+        "50",
         0
       ]
     },
@@ -159,11 +224,11 @@
       "title": "Florence2Run"
     }
   },
-  "28": {
+  "49": {
     "inputs": {
       "text_0": "",
       "text": [
-        "27",
+        "48",
         2
       ]
     },
@@ -172,7 +237,7 @@
       "title": "Show Text 🐍"
     }
   },
-  "29": {
+  "50": {
     "inputs": {
       "model": "microsoft/Florence-2-base",
       "precision": "fp16",
@@ -184,30 +249,51 @@
       "title": "DownloadAndLoadFlorence2Model"
     }
   },
-  "33": {
+  "53": {
     "inputs": {
-      "text1": [
-        "28",
+      "delimiter": ", ",
+      "clean_whitespace": "true",
+      "text_a": [
+        "54",
         0
       ],
-      "text2": [
-        "34",
+      "text_b": [
+        "48",
+        2
+      ],
+      "text_c": [
+        "59",
         0
       ],
-      "text3": [
-        "34",
-        1
+      "text_d": [
+        "60",
+        0
       ]
     },
-    "class_type": "Text_Concatenate",
+    "class_type": "Text Concatenate",
     "_meta": {
       "title": "Text Concatenate"
     }
   },
-  "34": {
+  "54": {
     "inputs": {
-      "text_positive": "{{user_prompt}}",
-      "text_negative": "{{user_negative}}",
+      "value": "{{user_prompt}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "주요이야기"
+    }
+  },
+  "56": {
+    "inputs": {
+      "text_positive": [
+        "53",
+        0
+      ],
+      "text_negative": [
+        "61",
+        0
+      ],
       "style": "artstyle-watercolor",
       "log_prompt": true,
       "style_positive": true,
@@ -218,13 +304,106 @@
       "title": "SDXL Prompt Styler"
     }
   },
-  "35": {
+  "58": {
     "inputs": {
       "url": "{{user_image}}"
     },
     "class_type": "LoadImageFromURL",
     "_meta": {
-      "title": "Load Images from URL"
+      "title": "메인캐릭터이미지URL"
+    }
+  },
+  "59": {
+    "inputs": {
+      "value": "{{user_background}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "배경"
+    }
+  },
+  "60": {
+    "inputs": {
+      "value": "{{user_mood}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "분위기"
+    }
+  },
+  "61": {
+    "inputs": {
+      "value": "{{user_negative}}"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "NEGATIVE"
+    }
+  },
+  "62": {
+    "inputs": {
+      "value": ""
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "주요이야기"
+    }
+  },
+  "63": {
+    "inputs": {
+      "lora_name": "1751021779.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "45",
+        0
+      ],
+      "clip": [
+        "44",
+        0
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
+    }
+  },
+  "64": {
+    "inputs": {
+      "lora_name": "Watercolor _sdxl-000001.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "65",
+        0
+      ],
+      "clip": [
+        "65",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
+    }
+  },
+  "65": {
+    "inputs": {
+      "lora_name": "PencilDrawEn01-00_CE_FLUX_128AIT.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "63",
+        0
+      ],
+      "clip": [
+        "63",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRA 로드"
     }
   }
 }

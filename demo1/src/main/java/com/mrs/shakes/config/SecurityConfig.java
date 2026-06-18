@@ -41,7 +41,7 @@ public class SecurityConfig {
 	            CorsConfiguration config = new CorsConfiguration();
 	            config.setAllowedOrigins(Arrays.asList(
 	                "https://www.myshakes.cc", 
-	                "https://api.myshakes.cc",
+	                "https://apiServer.myshakes.cc",
 	                "http://localhost:5173"
 	            ));
 	            config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

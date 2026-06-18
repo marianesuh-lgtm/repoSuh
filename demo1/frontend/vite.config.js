@@ -33,7 +33,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/tts-api/, '')
       },
       '/api': {                     // ← 이 부분 추가
-       target: 'https://api.myshakes.cc',
+       target: 'https://apiServer.myshakes.cc',
        changeOrigin: true,
        secure: false,
        ws: true,

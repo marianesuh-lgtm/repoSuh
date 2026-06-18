@@ -77,7 +77,7 @@ public class BookController {
 	private final OllamaTestService ollamaTestService  ; 
 	private final StoryService  storyService ;
     private final ShakesProperties properties; // 생성자 주입
-    private final String imgUrl = "https://api.myShakes.cc/images/characters/";
+    private final String imgUrl = "https://apiServer.myShakes.cc/images/characters/";
     @Autowired
     private ResourceLoader resourceLoader;
     
