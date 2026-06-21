@@ -94,7 +94,7 @@ public class ServiceUtil {
 //        modifiedJson = modifiedJson.replace("{{user_mood}}", item.getMood() );
 //        modifiedJson = modifiedJson.replace("{{user_background}}", item.getBackground() );
 //        modifiedJson = modifiedJson.replace("{{user_style}}", style );
-        modifiedJson = modifiedJson.replace("{{user_image}}", image );
+       // modifiedJson = modifiedJson.replace("{{user_image}}", image );
         //modifiedJson = modifiedJson.replace("{{user_subImage}}", subImage );
 
         ObjectMapper mapper = new ObjectMapper();
@@ -344,7 +344,7 @@ public class ServiceUtil {
             rawPrompt = "A cute cat and a bird in Pixar style"; // 폴백 프롬프트
         }
         String modifiedJson = workflowJson.replace("{{user_prompt}}" ,  rawPrompt );
-        modifiedJson = modifiedJson.replace("{{user_image}}", image );
+       // modifiedJson = modifiedJson.replace("{{user_image}}", image );
         
 log.info("modifiedJson::: {}",modifiedJson);
         
@@ -437,10 +437,16 @@ log.info("modifiedJson::: {}",modifiedJson);
                         // ComfyUI /view 엔드포인트로 이미지 URL 구성
                         // 형식: http://127.0.0.1:8188/view?filename=xxx.png&subfolder=&type=output
                         //String viewUrl = "http://172.30.1.38:8188/view" +
-        	            String viewUrl = "/view" +
-                            "?filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8) +
-                            "&subfolder=" + URLEncoder.encode(subfolder, StandardCharsets.UTF_8) +
-                            "&type=" + URLEncoder.encode(type, StandardCharsets.UTF_8);
+//        	            String viewUrl = "/view" +
+//                            "?filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8) +
+//                            "&subfolder=" + URLEncoder.encode(subfolder, StandardCharsets.UTF_8) +
+//                            "&type=" + URLEncoder.encode(type, StandardCharsets.UTF_8);
+
+                    	//String filename = imageObj.optString("filename");
+                    	//String subfolder = firstImage.optString("subfolder"); // "COOLKIDSV2.safetensors"
+
+                    	// URL 조립: /images/COOLKIDSV2.safetensors/MrsShakes-xxx.jpg
+                    	String viewUrl =  "/images/" + subfolder + "/" + filename;
 
     	    	        log.info("pollForImage viewUrl::: {}", viewUrl);
                         
